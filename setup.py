@@ -6,8 +6,8 @@ from Cython.Distutils import build_ext
 setup(
   name = "csg",
   version = "0.2",
-  author_email = "welchr@umich.edu",
-  author = "Ryan Welch",
+  author_email = "",
+  author = "Center for Statistical Genetics",
   packages = [
     "csg",
     "csg/genetics",
