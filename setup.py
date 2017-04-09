@@ -14,7 +14,8 @@ setup(
     "csg/genome",
     "csg/notify",
     "csg/plotting",
-    "csg/statistics"
+    "csg/statistics",
+    "csg/intervaltree"
   ],
   cmdclass = {"build_ext" : build_ext},
   ext_modules = cythonize([

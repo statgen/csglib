@@ -1,5 +1,5 @@
 import unittest
-from IntervalTree import *
+from csg.intervaltree.IntervalTree import *
 
 class TestIntervalTreeNode(unittest.TestCase):
 
