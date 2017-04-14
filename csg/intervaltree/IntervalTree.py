@@ -26,9 +26,9 @@ class IntervalTreeNode:
          if self.end == interval.end:
             return 0
          elif self.end < interval.end:
-            return -1 
+            return -1
       elif self.start < interval.start:
-         return -1 
+         return -1
       return 1
 
 
@@ -55,9 +55,9 @@ class IntervalTreeNode:
 
 
 class IntervalTree:
-   
+
    def __init__(self):
-      self.root = None   
+      self.root = None
 
 
    def add(self, start, end, value):
@@ -65,7 +65,7 @@ class IntervalTree:
 
 
    def __add(self, start, end, value, deviation):
-      new_node = IntervalTreeNode(start, end, end, value, deviation, IntervalTreeNode.RED, None, None)      
+      new_node = IntervalTreeNode(start, end, end, value, deviation, IntervalTreeNode.RED, None, None)
 
       if self.root is None:
          self.root = new_node
@@ -91,7 +91,7 @@ class IntervalTree:
                   break
                else:
                   parent = parent.right
-         new_node.parent = parent 
+         new_node.parent = parent
 
       self.__balance(new_node)
 
@@ -101,7 +101,7 @@ class IntervalTree:
          node.color = IntervalTreeNode.BLACK  # Root is always black
       elif node.parent.color != IntervalTreeNode.BLACK: # Parent of RED node must be black
          uncle = node.get_uncle()
-         grandparent = node.get_grandparent() # at this point, grandparent exists always 
+         grandparent = node.get_grandparent() # at this point, grandparent exists always
          if uncle is not None and uncle.color == IntervalTreeNode.RED: # All children of red node must be black
             node.parent.color = IntervalTreeNode.BLACK
             uncle.color = IntervalTreeNode.BLACK
@@ -172,9 +172,9 @@ class IntervalTree:
          else:
             node.max_end = max(node.end, node.left.max_end, node.right.max_end)
 
-   
+
    def point_intersect(self, position):
-      nodes = [self.root]      
+      nodes = [self.root]
       while nodes:
          node = nodes.pop()
          if node.left is not None and node.left.max_end >= position:
@@ -231,7 +231,7 @@ class IntervalTree:
       while k > 0:
          while node is not None:
             nodes.append(node)
-            node = node.left 
+            node = node.left
          if nodes:
             node = nodes.pop()
             k -= 1
@@ -239,14 +239,14 @@ class IntervalTree:
             node = node.right
          else:
             break
-        
+
 
    def __k_first(self, node, k):
       nodes = []
       while k > 0:
          while node is not None:
             nodes.append(node)
-            node = node.left 
+            node = node.left
          if nodes:
             node = nodes.pop()
             k -= 1
@@ -263,7 +263,7 @@ class IntervalTree:
       while k > 0:
          while node is not None:
             nodes.append(node)
-            node = node.right 
+            node = node.right
          if nodes:
             node = nodes.pop()
             k -= 1
@@ -277,7 +277,7 @@ class IntervalTree:
       while k > 0:
          while node is not None:
             nodes.append(node)
-            node = node.right 
+            node = node.right
          if nodes:
             node = nodes.pop()
             k -= 1
@@ -310,7 +310,7 @@ class IntervalTree:
                node = node.parent
             if node.parent is not None:
                nodes.append(node.parent)
-                   
+
 
    def k_nearest_right(self, position, k):
       node = self.nearest_right(position)
@@ -366,7 +366,7 @@ class IntervalTree:
 
 
    def get_height(self):
-      return self.__get_height(self.root, 0, 0) 
+      return self.__get_height(self.root, 0, 0)
 
    def __get_height(self, node, path_height, max_height):
       if node is not None:
@@ -376,6 +376,3 @@ class IntervalTree:
       max_height = self.__get_height(node.left, path_height, max_height)
       max_height = self.__get_height(node.right, path_height, max_height)
       return max_height
-      
-
-
