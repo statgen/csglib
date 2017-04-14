@@ -265,6 +265,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_point_intersect(self):
       tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.point_intersect(1)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       expected_result = set(['1', '2', '3', '5'])
       for x in intervals:
@@ -275,6 +279,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_interval_overlap(self):
       tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.interval_overlap(5, 6)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       expected_result = set(['1', '3', '4', '6'])
       for x in intervals:
@@ -285,6 +293,9 @@ class TestIntervalTree(unittest.TestCase):
  
    def test_nearest_left(self):
       tree = IntervalTree()
+
+      self.assertIsNone(tree.nearest_left(10))
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])
@@ -296,6 +307,9 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_nearest_right(self):
       tree = IntervalTree()
+
+      self.assertIsNone(tree.nearest_right(-3))
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])
@@ -307,6 +321,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_k_first(self):
       tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.k_first(1)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])
@@ -326,6 +344,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_k_last(self):
       tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.k_last(1)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])
@@ -345,6 +367,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_k_nearest_left(self):
       tree = IntervalTree()
+       
+      result = [i.values[0] for i in tree.k_nearest_left(20, 20)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])
@@ -367,6 +393,10 @@ class TestIntervalTree(unittest.TestCase):
 
    def test_k_nearest_right(self):
       tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.k_nearest_right(-20, 20)]
+      self.assertEqual(len(result), 0)
+
       intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
       for x in intervals:
          tree.add(x[0], x[1], x[2])

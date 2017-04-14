@@ -174,30 +174,34 @@ class IntervalTree:
 
    
    def point_intersect(self, position):
-      nodes = [self.root]      
-      while nodes:
-         node = nodes.pop()
-         if node.left is not None and node.left.max_end >= position:
-            nodes.append(node.left)
-         if node.right is not None and node.right.max_end >= position and node.start <= position:
-            nodes.append(node.right)
-         if node.start <= position and position <= node.end:
-            yield node
+      if self.root is not None:
+         nodes = [self.root]      
+         while nodes:
+            node = nodes.pop()
+            if node.left is not None and node.left.max_end >= position:
+               nodes.append(node.left)
+            if node.right is not None and node.right.max_end >= position and node.start <= position:
+               nodes.append(node.right)
+            if node.start <= position and position <= node.end:
+               yield node
 
 
    def interval_overlap(self, start, end):
-      nodes = [self.root]
-      while nodes:
-         node = nodes.pop()
-         if node.left is not None and node.left.max_end >= start:
-            nodes.append(node.left)
-         if node.right is not None and node.right.max_end >= start and end >= node.start:
-            nodes.append(node.right)
-         if start <= node.end and end >= node.start:
-            yield node
+      if self.root is not None:
+         nodes = [self.root]
+         while nodes:
+            node = nodes.pop()
+            if node.left is not None and node.left.max_end >= start:
+               nodes.append(node.left)
+            if node.right is not None and node.right.max_end >= start and end >= node.start:
+               nodes.append(node.right)
+            if start <= node.end and end >= node.start:
+               yield node
 
 
    def nearest_left(self, position):
+      if self.root is None:
+         return None
       nodes = [self.root]
       nearest_node = None
       while nodes:
@@ -212,6 +216,8 @@ class IntervalTree:
 
 
    def nearest_right(self, position):
+      if self.root is None:
+         return None
       nodes = [self.root]
       nearest_node = None
       while nodes:
