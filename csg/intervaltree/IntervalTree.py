@@ -260,7 +260,19 @@ class IntervalTree:
          else:
             break
 
-
+   def ascending(self):
+      nodes = []
+      node = self.root
+      while True:
+         while node is not None:
+            nodes.append(node)
+            node = node.left
+         if nodes:
+            node = nodes.pop()
+            yield node
+            node = node.right
+         else:
+            break
 
    def k_last(self, k):
       nodes = []
@@ -286,6 +298,20 @@ class IntervalTree:
          if nodes:
             node = nodes.pop()
             k -= 1
+            yield node
+            node = node.left
+         else:
+            break
+
+   def descending(self):
+      nodes = []
+      node = self.root
+      while True:
+         while node is not None:
+            nodes.append(node)
+            node = node.right
+         if nodes:
+            node = nodes.pop()
             yield node
             node = node.left
          else:

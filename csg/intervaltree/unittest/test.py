@@ -342,6 +342,26 @@ class TestIntervalTree(unittest.TestCase):
       self.assertListEqual(result, ['2', '3', '1', '5', '6', '4'])
  
 
+   def test_ascending_descending(self):
+      tree = IntervalTree()
+
+      result = [i.values[0] for i in tree.ascending()]
+      self.assertEqual(len(result), 0)
+
+      result = [i.values[0] for i in tree.descending()]
+      self.assertEqual(len(result), 0)
+
+      intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+
+      result = [i.values[0] for i in tree.ascending()]
+      self.assertListEqual(result, ['2', '3', '1', '5', '6', '4'])
+
+      result = [i.values[0] for i in tree.descending()]
+      self.assertListEqual(result, ['4', '6', '5', '1', '3', '2'])
+
+
    def test_k_last(self):
       tree = IntervalTree()
 
