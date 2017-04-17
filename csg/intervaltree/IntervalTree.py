@@ -400,6 +400,16 @@ class IntervalTree:
             new_tree.add(merged_start, merged_end, v)
       return new_tree
 
+   
+   def complementary(self):
+      new_tree = IntervalTree()
+      start = None
+      for x in self.ascending():
+         if start is not None and start < x.start:
+            new_tree.add(start, x.start - 1) 
+         start = x.end + 1
+      return new_tree
+
 
    def get_values_count(self):
       return self.__get_values_count(self.root, 0)

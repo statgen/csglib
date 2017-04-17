@@ -513,7 +513,7 @@ class TestIntervalTree(unittest.TestCase):
          self.assertEqual(obs.end, exp[1])
          self.assertListEqual(obs.values, exp[2])
  
-   @unittest.skip("under development")
+
    def test_complementary(self):
       # empty tree
       tree = IntervalTree()
@@ -527,6 +527,66 @@ class TestIntervalTree(unittest.TestCase):
          tree.add(x[0], x[1], x[2])
       tree_complementary = tree.complementary()
       self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # two overlapping intervals
+      intervals = [(0, 5, '1'), (4, 6, '2')]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # two non-overlapping adjacent intervals
+      intervals = [(0, 5, '1'), (6, 10, '2')]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # two non-overlapping non-adjacent intervals
+      intervals = [(0, 5, '1'), (7, 10, '2')]
+      expected_intervals = [(6, 6)]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), len(expected_intervals))
+      self.assertEqual(tree_complementary.get_values_count(), 0)
+      for obs, exp in zip(tree_complementary.ascending(), expected_intervals):
+         self.assertEqual(obs.start, exp[0])
+         self.assertEqual(obs.end, exp[1])
+         self.assertEqual(len(obs.values), 0)
+
+      # many overlapping intervals
+      intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # many overlapping or/and adjacent intervals
+      intervals = [(0, 5, '1'), (-5, -3, '2'), (10, 20, '3'), (6, 15, '4'), (-5, -2, '5'), (0, 5, '6'), (-1, 4, '7')]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # many overlapping or/and adjacent intervals
+      intervals = [(1, 5, '1'), (-5, -4, '2'), (11, 20, '3'), (10, 15, '4'), (-5, -3, '5'), (0, 5, '6'), (0, 4, '7')]
+      expected_intervals = [(-2, -1), (6, 9)]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), len(expected_intervals))
+      self.assertEqual(tree_complementary.get_values_count(), 0)
+      for obs, exp in zip(tree_complementary.ascending(), expected_intervals):
+         self.assertEqual(obs.start, exp[0])
+         self.assertEqual(obs.end, exp[1])
+         self.assertEqual(len(obs.values), 0)
 
 
 if __name__ == '__main__':
