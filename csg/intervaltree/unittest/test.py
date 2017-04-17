@@ -227,7 +227,6 @@ class TestIntervalTree(unittest.TestCase):
       self.assertEqual(tree.get_height(), 4)
 
 
-
    def test_duplicated_intervals(self):
       tree = IntervalTree()
       
@@ -437,6 +436,51 @@ class TestIntervalTree(unittest.TestCase):
       self.assertListEqual(result, ['2', '3', '1', '5', '6', '4'])
 
 
+   def test_merge(self):
+      # empty tree
+      tree = IntervalTree()
+      tree_merged = tree.merge()
+      self.assertEqual(tree_merged.get_intervals_count(), 0)
+
+      # nothing to merge
+      intervals = [(0, 5, '1'), (-2, -1, '2'), (10, 20, '3'), (8, 9, '4'), (6, 7, '5'), (-5, -3, '6')]
+      expected_merged_intervals = [(-5, -3, ['6']), (-2, -1, ['2']), (0, 5, ['1']), (6, 7, ['5']), (8, 9, ['4']), (10, 20, ['3'])]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_merged = tree.merge()
+      self.assertEqual(tree_merged.get_intervals_count(), len(expected_merged_intervals))
+      for obs, exp in zip(tree_merged.ascending(), expected_merged_intervals):
+         self.assertEqual(obs.start, exp[0])
+         self.assertEqual(obs.end, exp[1])
+         self.assertListEqual(obs.values, exp[2])
+
+      # merge all intervals
+      intervals = [(0, 5, '1'), (-2, 1, '2'), (-1, 20, '3'), (4, 6, '4'), (1, 3, '5'), (3, 10, '6')]
+      expected_merged_intervals = [(-2, 20, ['2', '3', '1', '5', '6', '4'])]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_merged = tree.merge()
+      self.assertEqual(tree_merged.get_intervals_count(), len(expected_merged_intervals))
+      for obs, exp in zip(tree_merged.ascending(), expected_merged_intervals):
+         self.assertEqual(obs.start, exp[0])
+         self.assertEqual(obs.end, exp[1])
+         self.assertListEqual(obs.values, exp[2])
+      
+      # merge some intervals
+      intervals = [(0, 5, '1'), (-5, -3, '2'), (10, 20, '3'), (6, 15, '4'), (-5, -2, '5'), (0, 5, '6'), (-1, 4, '7')]
+      expected_merged_intervals = [(-5, -2, ['2', '5']), (-1, 5, ['7', '1', '6']), (6, 20, ['4', '3'])]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_merged = tree.merge()
+      self.assertEqual(tree_merged.get_intervals_count(), len(expected_merged_intervals))
+      for obs, exp in zip(tree_merged.ascending(), expected_merged_intervals):
+         self.assertEqual(obs.start, exp[0])
+         self.assertEqual(obs.end, exp[1])
+         self.assertListEqual(obs.values, exp[2])
+ 
 
 if __name__ == '__main__':
    suite = unittest.TestSuite()

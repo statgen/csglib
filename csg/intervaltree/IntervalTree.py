@@ -369,6 +369,33 @@ class IntervalTree:
                nodes.append(node.parent)
 
 
+   def merge(self):
+      new_tree = IntervalTree()
+      ascending = self.ascending()
+      merged_start = None
+      merged_end = None
+      merged_values = None
+      x = next(ascending, None)
+      if x is not None:
+         merged_start = x.start
+         merged_end = x.end
+         merged_values = x.values[:]
+      for x in ascending:
+         if merged_end < x.start:
+            for v in merged_values:
+               new_tree.add(merged_start, merged_end, v)
+            merged_start = x.start
+            merged_end = x.end
+            merged_values = x.values[:]
+         else:
+            if merged_end < x.end:
+               merged_end = x.end
+            merged_values.extend(x.values)
+      if merged_start is not None and merged_end is not None and merged_values is not None:
+         for v in merged_values:
+            new_tree.add(merged_start, merged_end, v)
+      return new_tree
+
 
    def get_values_count(self):
       return self.__get_values_count(self.root, 0)
