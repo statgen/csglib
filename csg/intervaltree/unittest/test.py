@@ -261,6 +261,38 @@ class TestIntervalTree(unittest.TestCase):
       self.assertEqual(tree.get_values_count(), 4)
       self.assertEqual(tree.get_height(), 2)
 
+  
+   def test_labels(self):
+      tree = IntervalTree()
+
+      tree.add(-2, 2)
+      self.assertEqual(tree.get_intervals_count(), 1)
+      self.assertEqual(tree.get_values_count(), 0)
+      
+      tree.add(-2, 2, None)
+      self.assertEqual(tree.get_intervals_count(), 1)
+      self.assertEqual(tree.get_values_count(), 0)
+
+      tree.add(-2, 2, 'label1')
+      self.assertEqual(tree.get_intervals_count(), 1)
+      self.assertEqual(tree.get_values_count(), 1)
+      self.assertListEqual(next(tree.ascending(), None).values, ['label1'])
+ 
+      tree.add(-2, 2, None)
+      self.assertEqual(tree.get_intervals_count(), 1)
+      self.assertEqual(tree.get_values_count(), 1)
+      self.assertListEqual(next(tree.ascending(), None).values, ['label1'])
+
+      tree.add(-2, 2, 'label2')
+      self.assertEqual(tree.get_intervals_count(), 1)
+      self.assertEqual(tree.get_values_count(), 2)
+      self.assertListEqual(next(tree.ascending(), None).values, ['label1', 'label2'])
+
+      tree.add(3, 7, 'label3')
+      self.assertEqual(tree.get_intervals_count(), 2)
+      self.assertEqual(tree.get_values_count(), 3)
+      self.assertListEqual(next(tree.descending(), None).values, ['label3'])
+
 
    def test_point_intersect(self):
       tree = IntervalTree()
@@ -481,6 +513,21 @@ class TestIntervalTree(unittest.TestCase):
          self.assertEqual(obs.end, exp[1])
          self.assertListEqual(obs.values, exp[2])
  
+   @unittest.skip("under development")
+   def test_complementary(self):
+      # empty tree
+      tree = IntervalTree()
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
+      # single interval
+      intervals = [(0, 5, '1')]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1], x[2])
+      tree_complementary = tree.complementary()
+      self.assertEqual(tree_complementary.get_intervals_count(), 0)
+
 
 if __name__ == '__main__':
    suite = unittest.TestSuite()

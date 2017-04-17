@@ -7,7 +7,10 @@ class IntervalTreeNode:
       self.start = start
       self.end = end
       self.max_end = max_end
-      self.values = [value]
+      if value is not None:
+         self.values = [value]
+      else:
+         self.values = []
       self.deviation = deviation
       self.color = color
       self.parent = None
@@ -60,7 +63,7 @@ class IntervalTree:
       self.root = None
 
 
-   def add(self, start, end, value):
+   def add(self, start, end, value = None):
       self.__add(start, end, value, 0)
 
 
@@ -75,7 +78,8 @@ class IntervalTree:
          while  True:
             comparison = new_node.compare(parent)
             if comparison == 0:
-               parent.values.append(value)
+               if value is not None:
+                  parent.values.append(value)
                return
             elif comparison < 0:
                parent.max_end = max(parent.max_end, new_node.max_end)
