@@ -1,7 +1,10 @@
+
 from distutils.core import setup
 from distutils.extension import Extension
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
+
+def build_ext(*args, **kwargs):
+  from Cython.Distutils import build_ext
+  return build_ext(*args, **kwargs)
 
 setup(
   name = "csg",
@@ -18,7 +21,7 @@ setup(
     "csg/intervaltree"
   ],
   cmdclass = {"build_ext" : build_ext},
-  ext_modules = cythonize([
+  ext_modules = [
     Extension(
       "csg.statistics.invnorm",
       sources = ["csg/statistics/invnorm.pyx"],
@@ -27,7 +30,7 @@ setup(
       "csg.genetics.cyalleles",
       sources = ["csg/genetics/cyalleles.pyx"],
     )
-  ]),
+  ],
   classifiers = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Science/Research',
@@ -35,6 +38,13 @@ setup(
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3.5',
     'Topic :: Scientific/Engineering :: Bio-Informatics'
-  ]
+  ],
+  setup_requires = [
+    'setuptools>=18.0',
+    'cython',
+    'numpy',
+  ],
 )
 
+
+# -*- python-indent-offset: 2 -*-
