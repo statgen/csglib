@@ -448,3 +448,18 @@ class IntervalTree:
       max_height = self.__get_height(node.left, path_height, max_height)
       max_height = self.__get_height(node.right, path_height, max_height)
       return max_height
+
+
+   def __str__(self):
+      rv = []
+      d = self.get_height() * 3
+      def print_node(node, depth):
+         if node is not None:
+            print_node(node.left, depth+1)
+            rv.append('{:<{}}'.format(
+               ' '*3*depth + ('blk' if node.color == IntervalTreeNode.BLACK else 'red'),
+               d) +
+                      ' [{start:2},{end:2}]({max_end:2}) : {values}'.format(**node.__dict__))
+            print_node(node.right, depth+1)
+      print_node(self.root, 0)
+      return '\n'.join(rv)
