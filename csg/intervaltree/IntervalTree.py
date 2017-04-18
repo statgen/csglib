@@ -37,7 +37,7 @@ class IntervalTreeNode:
 
    def get_sibling(self):
       if self.parent is not None:
-         if id(self) == id(self.parent.left):
+         if self is self.parent.left:
             return self.parent.right
          else:
             return self.parent.left
@@ -47,8 +47,8 @@ class IntervalTreeNode:
    def get_uncle(self):
       if self.parent is not None:
          return self.parent.get_sibling()
-      return None           
-             
+      return None
+
 
    def get_grandparent(self):
       if self.parent is not None:
@@ -134,16 +134,16 @@ class IntervalTree:
             self.__balance(grandparent)
          else:
             # Unify subtree for the last step with appropriate rotations: parent and its child must be on the same side relatively to grandparent (either left or right).
-            if id(node) == id(node.parent.right) and id(node.parent) == id(grandparent.left):
+            if node is node.parent.right and node.parent is grandparent.left:
                self.__rotate_left(node.parent)
                node = node.left
-            elif id(node) == id(node.parent.left) and id(node.parent) == id(grandparent.right):
+            elif node is node.parent.left and node.parent is grandparent.right:
                self.__rotate_right(node.parent)
                node = node.right
             # The last step:
             node.parent.color = IntervalTreeNode.BLACK
             grandparent.color = IntervalTreeNode.RED
-            if id(node) == id(node.parent.left) and id(node.parent) == id(grandparent.left):
+            if node is node.parent.left and node.parent is grandparent.left:
                self.__rotate_right(grandparent)
             else:
                self.__rotate_left(grandparent)
@@ -156,9 +156,9 @@ class IntervalTree:
          pivot_node.left.parent = node
       pivot_node.left = node
       pivot_node.parent = node.parent
-      if id(node) == id(self.root):
+      if node is self.root:
          self.root = pivot_node
-      elif id(node) == id(node.parent.left):
+      elif node is node.parent.left:
          node.parent.left = pivot_node
       else:
          node.parent.right = pivot_node
@@ -174,9 +174,9 @@ class IntervalTree:
          pivot_node.right.parent = node
       pivot_node.right = node
       pivot_node.parent = node.parent
-      if id(node) == id(self.root):
+      if node is self.root:
          self.root = pivot_node
-      elif id(node) == id(node.parent.left):
+      elif node is node.parent.left:
          node.parent.left = pivot_node
       else:
          node.parent.right = pivot_node
@@ -362,7 +362,7 @@ class IntervalTree:
                yield x
 
          if k > 0:
-            while node.parent is not None and id(node.parent.right) != id(node):
+            while node.parent is not None and node.parent.right is not node:
                node = node.parent
             if node.parent is not None:
                nodes.append(node.parent)
@@ -388,7 +388,7 @@ class IntervalTree:
                yield x
 
          if k > 0:
-            while node.parent is not None and id(node.parent.left) != id(node):
+            while node.parent is not None and node.parent.left is not node:
                node = node.parent
             if node.parent is not None:
                nodes.append(node.parent)
