@@ -56,6 +56,27 @@ class IntervalTreeNode:
       return None
 
 
+   def get_height(self):
+      heights = [1]
+      for node in [self.left, self.right]:
+         if node is not None:
+            heights.append(1 + node.get_height())
+      return max(heights)
+
+   def get_values_count(self):
+      count = len(self.values)
+      for node in [self.left, self.right]:
+         if node is not None:
+            count += node.get_values_count()
+      return count
+
+   def get_intervals_count(self):
+      count = 1
+      for node in [self.left, self.right]:
+         if node is not None:
+            count += node.get_intervals_count()
+      return count
+
 
 class IntervalTree:
 
@@ -412,53 +433,27 @@ class IntervalTree:
 
 
    def get_values_count(self):
-      return self.__get_values_count(self.root, 0)
-
-   def __get_values_count(self, node, count):
-      if node is not None:
-         count += len(node.values)
-      else:
-         return count
-      count = self.__get_values_count(node.left, count)
-      count = self.__get_values_count(node.right, count)
-      return count
+      return 0 if self.root is None else self.root.get_values_count()
+   __len__ = get_values_count
 
 
    def get_intervals_count(self):
-      return self.__get_intervals_count(self.root, 0)
-
-   def __get_intervals_count(self, node, count):
-      if node is not None:
-         count += 1
-      else:
-         return count
-      count = self.__get_intervals_count(node.left, count)
-      count = self.__get_intervals_count(node.right, count)
-      return count
+      return 0 if self.root is None else self.root.get_intervals_count()
 
 
    def get_height(self):
-      return self.__get_height(self.root, 0, 0)
-
-   def __get_height(self, node, path_height, max_height):
-      if node is not None:
-         path_height += 1
-      else:
-         return max(path_height, max_height)
-      max_height = self.__get_height(node.left, path_height, max_height)
-      max_height = self.__get_height(node.right, path_height, max_height)
-      return max_height
+      return 0 if self.root is None else self.root.get_height()
 
 
    def __str__(self):
       rv = []
-      d = self.get_height() * 3
+      height = self.get_height()
       def print_node(node, depth):
          if node is not None:
             print_node(node.left, depth+1)
             rv.append('{:<{}}'.format(
                ' '*3*depth + ('blk' if node.color == IntervalTreeNode.BLACK else 'red'),
-               d) +
+               height*3) +
                       ' [{start:2},{end:2}]({max_end:2}) : {values}'.format(**node.__dict__))
             print_node(node.right, depth+1)
       print_node(self.root, 0)
