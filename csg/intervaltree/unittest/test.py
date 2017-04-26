@@ -513,6 +513,19 @@ class TestIntervalTree(unittest.TestCase):
          self.assertEqual(obs.end, exp[1])
          self.assertListEqual(obs.values, exp[2])
  
+      # merge intervals without labels
+      intervals = [(0, 5), (-1, 4), (3, 8)]
+      expected_merged_intervals = [(-1, 8, [])]
+      tree = IntervalTree()
+      for x in intervals:
+         tree.add(x[0], x[1])
+      tree_merged = tree.merge()
+      self.assertEqual(tree_merged.get_intervals_count(), len(expected_merged_intervals))
+      for obs, exp in zip(tree_merged.ascending(), expected_merged_intervals):
+          self.assertEqual(obs.start, exp[0])
+          self.assertEqual(obs.end, exp[1])
+          self.assertListEqual(obs.values, exp[2])
+
 
    def test_complementary(self):
       # empty tree

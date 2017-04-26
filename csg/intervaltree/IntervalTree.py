@@ -407,8 +407,11 @@ class IntervalTree:
          merged_values = x.values[:]
       for x in ascending:
          if merged_end < x.start:
-            for v in merged_values:
-               new_tree.add(merged_start, merged_end, v)
+            if len(merged_values) > 0:
+               for v in merged_values:
+                  new_tree.add(merged_start, merged_end, v)
+            else:
+               new_tree.add(merged_start, merged_end)
             merged_start = x.start
             merged_end = x.end
             merged_values = x.values[:]
@@ -417,8 +420,11 @@ class IntervalTree:
                merged_end = x.end
             merged_values.extend(x.values)
       if merged_start is not None and merged_end is not None and merged_values is not None:
-         for v in merged_values:
-            new_tree.add(merged_start, merged_end, v)
+         if len(merged_values) > 0:
+            for v in merged_values:
+               new_tree.add(merged_start, merged_end, v)
+         else:
+             new_tree.add(merged_start, merged_end)
       return new_tree
 
    
