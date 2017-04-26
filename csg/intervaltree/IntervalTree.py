@@ -200,7 +200,7 @@ class IntervalTree:
 
    def point_intersect(self, position):
       if self.root is not None:
-         nodes = [self.root]      
+         nodes = [self.root]
          while nodes:
             node = nodes.pop()
             if node.left is not None and node.left.max_end >= position:
@@ -427,13 +427,13 @@ class IntervalTree:
              new_tree.add(merged_start, merged_end)
       return new_tree
 
-   
+
    def complementary(self):
       new_tree = IntervalTree()
       start = None
       for x in self.ascending():
          if start is not None and start < x.start:
-            new_tree.add(start, x.start - 1) 
+            new_tree.add(start, x.start - 1)
          start = x.end + 1
       return new_tree
 
