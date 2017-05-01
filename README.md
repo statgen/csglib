@@ -24,3 +24,6 @@ Module pyld for computing linkage-disequilibrium (LD) (r, r^2) from VCFs. No spe
 1. compute pairwise LD between pair of SNPs from any chromosomal region in VCF;
 2. compute pairwise LD between all SNPs from a specified region in VCF;
 3. provides additional routines to compute allele frequencies.
+
+### csg / pedigree / trios / 
+Module trios for constructing trio families (two parents and a child) based on genetic kinship estimates and sex. Includes utilities to read PC-relate and KING software outputs. 
