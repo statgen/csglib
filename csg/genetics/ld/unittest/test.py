@@ -1,7 +1,7 @@
 import unittest
 import gzip
 import math
-from csg.genetics.ld import pyld
+from csg.genetics.ld.pyld import LD
 
 class TestLD(unittest.TestCase):
 
@@ -36,40 +36,126 @@ class TestLD(unittest.TestCase):
             alt_freq = float(fields['{FREQ}'].split('\t')[1])
             self.precomputed_freq[id1] = alt_freq
 
+   def test_get_variant_haplotypes(self):
+      ld = LD()
+      ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
 
-   def test_freq_array(self):
-      pyld.open_vcf('1000G_phase3.EUR.chr20.vcf.gz', chrom = '20')
-      haplotypes = pyld.get_region_haplotypes('20', 11650214, 60759931)
-      self.assertEqual(len(haplotypes[0]), 9)
-      self.assertTupleEqual(haplotypes[1].shape, (9, 1006))
-      freq = pyld.get_freq_array(haplotypes)
-      for i in xrange(0, len(haplotypes[0])):
-         id1 = haplotypes[0][i].rsplit('_', 2)[0]
+      haplotypes = ld.get_variant_haplotypes('21', 11650214)
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_variant_haplotypes('20', 11111111)
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_variant_haplotypes('20', 11650214)
+      self.assertEqual(haplotypes.size, 1)
+      self.assertListEqual(haplotypes.chrom, ['20'])
+      self.assertListEqual(haplotypes.position, [11650214])
+      self.assertListEqual(haplotypes.ref, ['G'])
+      self.assertListEqual(haplotypes.alt, ['A'])
+      ld.release_vcfs()
+
+   def test_get_region_haplotypes(self):
+      ld = LD()
+      ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+      haplotypes = ld.get_region_haplotypes('21', 14403183, 19485821)
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_region_haplotypes('20', 11111111, 11111112)
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_region_haplotypes('20', 14403183, 19485821)
+      self.assertEqual(haplotypes.size, 3)
+      self.assertListEqual(haplotypes.chrom, ['20', '20', '20'])
+      self.assertListEqual(haplotypes.position, [14403183, 16655993, 19485821])
+      self.assertListEqual(haplotypes.ref, ['C', 'T', 'A'])
+      self.assertListEqual(haplotypes.alt, ['A', 'G', 'G'])
+
+      ld.release_vcfs()
+
+   def test_compute_variant_freq(self):
+       ld = LD()
+       ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+       haplotypes = ld.get_variant_haplotypes('20', 11111111)
+       freq = ld.compute_variant_freq(haplotypes)
+       self.assertIsNone(freq)
+
+       haplotypes = ld.get_variant_haplotypes('20', 14403183)
+       freq = ld.compute_variant_freq(haplotypes)
+       id1 = haplotypes.chrom[0] + '_' + str(haplotypes.position[0])
+       self.assertAlmostEqual(freq, self.precomputed_freq[id1])
+
+       haplotypes = ld.get_variant_haplotypes('20', 11650214)
+       freq = ld.compute_variant_freq(haplotypes)
+       id1 = haplotypes.chrom[0] + '_' + str(haplotypes.position[0])
+       self.assertAlmostEqual(freq, self.precomputed_freq[id1])
+
+       ld.release_vcfs()
+
+   def test_compute_region_freq(self):
+      ld = LD()
+      ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+      haplotypes = ld.get_region_haplotypes('20', 11111111, 11111112)
+      freq = ld.compute_region_freq(haplotypes)
+      self.assertIsNone(freq)
+
+      haplotypes = ld.get_region_haplotypes('20', 11650214, 60759931)
+      freq = ld.compute_region_freq(haplotypes)
+      for i in xrange(0, haplotypes.size):
+         id1 = haplotypes.chrom[i] + '_' + str(haplotypes.position[i])
          self.assertAlmostEqual(freq[i], self.precomputed_freq[id1], places = 6)
-      pyld.close_vcf()
 
+      ld.release_vcfs()
 
-   def test_r_matrix(self):
-      pyld.open_vcf('1000G_phase3.EUR.chr20.vcf.gz', chrom = '20')
-      haplotypes = pyld.get_region_haplotypes('20', 11650214, 60759931)
-      self.assertEqual(len(haplotypes[0]), 9)
-      self.assertTupleEqual(haplotypes[1].shape, (9, 1006))
-      r = pyld.compute_r_matrix(haplotypes)
-      for i in xrange(0, len(haplotypes[0])):
-         for j in xrange(i, len(haplotypes[0])):
-            id1 = haplotypes[0][i].rsplit('_', 2)[0]
-            id2 = haplotypes[0][j].rsplit('_', 2)[0]
+   def test_compute_r(self):
+       ld = LD()
+       ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+       haplotypes1 = ld.get_variant_haplotypes('20', 1111112)
+       haplotypes2 = ld.get_variant_haplotypes('21', 1111112)
+       r = ld.compute_r(haplotypes1, haplotypes2)
+       self.assertIsNone(r)
+
+       haplotypes1 = ld.get_variant_haplotypes('20', 11650214)
+       haplotypes2 = ld.get_variant_haplotypes('20', 16655993)
+       id1 = haplotypes1.chrom[0] + '_' + str(haplotypes1.position[0])
+       id2 = haplotypes2.chrom[0] + '_' + str(haplotypes2.position[0])
+       r = ld.compute_r(haplotypes1, haplotypes2)
+       expected_rsquare = self.precomputed_ld[id1][id2]
+       self.assertAlmostEqual(r ** 2, expected_rsquare)
+
+       ld.release_vcfs()
+
+   def test_compute_r_matrix(self):
+      ld = LD()
+      ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+      haplotypes = ld.get_region_haplotypes('20', 11111111, 11111112)
+      r = ld.compute_r_matrix(haplotypes)
+      self.assertIsNone(r)
+
+      haplotypes = ld.get_region_haplotypes('20', 11650214, 60759931)
+      r = ld.compute_r_matrix(haplotypes)
+      freq = ld.compute_region_freq(haplotypes)
+      for i in xrange(0, haplotypes.size):
+         for j in xrange(i, haplotypes.size):
+            id1 = haplotypes.chrom[i] + '_' + str(haplotypes.position[i])
+            id2 = haplotypes.chrom[j] + '_' + str(haplotypes.position[j])
             if id1 != id2:
-               expected_r = self.precomputed_ld[id1][id2]
+               expected_rsquare = self.precomputed_ld[id1][id2]
                if math.isnan(r[i, j]):
-                  self.assertTrue(math.isnan(expected_r))
+                  self.assertTrue(math.isnan(expected_rsquare))
                else:
-                  self.assertAlmostEqual(r[i, j] ** 2, expected_r)
+                  self.assertAlmostEqual(r[i, j] ** 2, expected_rsquare)
             else:
-               pass
-               #print id1, id2, r[i, j]
-               #self.assertEqual(r[i, j] ** 2, 1.0)
-      pyld.close_vcf()
+               if freq[i] == 0.0 or freq[i] == 1.0:
+                  self.assertTrue(math.isnan(r[i, j]))
+               else:
+                  self.assertAlmostEqual(r[i, j] ** 2, 1.0)
+
+      ld.release_vcfs()
 
 
 if __name__ == '__main__':
