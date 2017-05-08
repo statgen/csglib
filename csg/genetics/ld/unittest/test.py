@@ -54,6 +54,27 @@ class TestLD(unittest.TestCase):
       self.assertListEqual(haplotypes.alt, ['A'])
       ld.release_vcfs()
 
+   def test_get_variant_haplotypes_strict(self):
+      ld = LD()
+      ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')
+
+      haplotypes = ld.get_variant_haplotypes_strict('21', 11650214, 'G', 'A')
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_variant_haplotypes_strict('20', 11111111, 'G', 'A')
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_variant_haplotypes_strict('20', 11650214, 'G', 'T')
+      self.assertIsNone(haplotypes)
+
+      haplotypes = ld.get_variant_haplotypes_strict('20', 11650214, 'G', 'A')
+      self.assertEqual(haplotypes.size, 1)
+      self.assertListEqual(haplotypes.chrom, ['20'])
+      self.assertListEqual(haplotypes.position, [11650214])
+      self.assertListEqual(haplotypes.ref, ['G'])
+      self.assertListEqual(haplotypes.alt, ['A'])
+      ld.release_vcfs()
+
    def test_get_region_haplotypes(self):
       ld = LD()
       ld.add_vcf('1000G_phase3.EUR.chr20.vcf.gz')

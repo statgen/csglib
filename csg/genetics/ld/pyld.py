@@ -50,6 +50,21 @@ class LD:
             return Haplotypes(size = 1, chrom = [row[0]], position = [long(row[1])], ref = [row[3]], alt = [row[4]], haplotypes = haplotypes)
       return None
 
+   def get_variant_haplotypes_strict(self, chrom, position, ref, alt):
+      tabix = self.chrom2tabix.get(chrom, None)
+      if tabix is not None:
+         for row in tabix.fetch(chrom, position - 1, position, parser = pysam.asTuple()):
+            if ',' in row[4]: # ignore multi-allelic
+               continue
+            if row[3] != ref or row[4] != alt:
+               continue
+            haplotypes = np.empty([1, self.N], dtype = np.int, order = 'C')
+            for i in xrange(9, len(row)):
+               haplotypes[0, 2 * i - 18] = np.int(row[i][0])
+               haplotypes[0, 2 * i - 17] = np.int(row[i][2])
+            return Haplotypes(size = 1, chrom = [row[0]], position = [long(row[1])], ref = [row[3]], alt = [row[4]], haplotypes = haplotypes)
+      return None
+
    def get_region_haplotypes(self, chrom, start_position, end_position):
       tabix = self.chrom2tabix.get(chrom, None)
       if tabix:
