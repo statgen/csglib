@@ -18,7 +18,8 @@ setup(
     "csg/notify",
     "csg/plotting",
     "csg/statistics",
-    "csg/intervaltree"
+    "csg/intervaltree",
+    "csg/pedigree"
   ],
   cmdclass = {"build_ext" : build_ext},
   ext_modules = [
