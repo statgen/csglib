@@ -17,7 +17,9 @@ Module intervaltree implements interval tree data structure for time efficient (
 5. find K nearest intervals from the left of the given point; 
 6. find K nearest intervals from the right of the given point; 
 7. get first K intervals; 
-8. get last K intervals.
+8. get last K intervals;
+9. merge overlapping interavls;
+10. construct complementary intervals (i.e. extracts all gaps between non-overlapping intervals)
 
 ### csg / genetics / ld /
 Module pyld for computing linkage-disequilibrium (LD) (r, r^2) from VCFs. No special file format is needed - just provide phased VCFs (e.g. 1000G) compressed using bgzip and indexed using tabix. Supported operations: 
@@ -28,6 +30,7 @@ Module pyld for computing linkage-disequilibrium (LD) (r, r^2) from VCFs. No spe
 ### csg / gwas /
 Module gwas has miscellaneous functions for manipulating genome-wide associations results such as:
 1. independent.py -- get independent most significant association hits based on linkage-disequilibrium
+2. inflation.py -- compute inflation
 
 ### csg / pedigree / trios / 
 Module trios for constructing trio families (two parents and a child) based on genetic kinship estimates and sex. Includes utilities to read PC-relate and KING software outputs. 
