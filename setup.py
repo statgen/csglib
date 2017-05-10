@@ -19,7 +19,8 @@ setup(
     "csg/plotting",
     "csg/statistics",
     "csg/intervaltree",
-    "csg/pedigree"
+    "csg/pedigree",
+    "csg/gwas"
   ],
   cmdclass = {"build_ext" : build_ext},
   ext_modules = [
