@@ -5,7 +5,7 @@ from collections import namedtuple
 import gzip
 import re
 
-PublishedAssociation = namedtuple('PublishedAssociation', ['chrom', 'position', 'rsid', 'trait', 'pvalue', 'pubmed'], verbose = False)
+PublishedSNVAssociation = namedtuple('PublishedSNVAssociation', ['chrom', 'position', 'rsid', 'trait', 'pvalue', 'pubmed'], verbose = False)
 
 #graph = rdflib.Graph()
 #graph.parse('gwas-kb.owl')
@@ -36,10 +36,11 @@ def get_known_associations_owl(graph, trait):
    result = graph.query(query, initBindings = {'trait' : rdflib.term.Literal(trait)})
 
    for row in result:
-      yield PublishedAssociation(chrom = row[0].toPython(), position = row[1].toPython(), rsid = row[2].toPython(), trait = row[3].toPython(), pvalue = row[4].toPython(), pubmed = row[5].toPython())
+      yield PublishedSNVAssociation(chrom = row[0].toPython(), position = row[1].toPython(), rsid = row[2].toPython(), trait = row[3].toPython(), pvalue = row[4].toPython(), pubmed = row[5].toPython())
 
 
-def get_known_associations_tsv(catalog_associations_file, trait):
+def get_known_snv_associations_tsv(catalog_associations_file, trait = None):
+   chr_pos_pattern = re.compile('^(?:chr)?([XY0-9]+):([0-9]+)$', re.IGNORECASE)
    with open(catalog_associations_file, 'r') as ifile:
       line = ifile.readline()
       if not line:
@@ -47,19 +48,52 @@ def get_known_associations_tsv(catalog_associations_file, trait):
       header = line.rstrip().split('\t')
       for line in ifile:
          fields = dict(zip(header, line.rstrip().split('\t')))
-         if not fields['SNP_ID_CURRENT']:
-            #print fields['SNPS'], fields['MERGED']
+         pvalue = None
+         pubmed = None
+         study_trait = None
+
+         if not fields['DISEASE/TRAIT']:
             continue
-         if fields['DISEASE/TRAIT'] != trait:
+         study_trait = fields['DISEASE/TRAIT']
+
+         if trait and study_trait != trait:
             continue
-         yield PublishedAssociation(
-            chrom = fields['CHR_ID'],
-            position = fields['CHR_POS'],
-            rsid = fields['SNP_ID_CURRENT'],
-            trait = fields['DISEASE/TRAIT'],
-            pvalue = fields['P-VALUE'],
-            pubmed = fields['PUBMEDID']
-         )
+
+         if not fields['P-VALUE']:
+            continue
+         pvalue = fields['P-VALUE']
+
+         if not fields['PUBMEDID']:
+            continue
+         pubmed = fields['PUBMEDID']
+
+         if fields['SNP_ID_CURRENT']:
+            if fields['SNP_ID_CURRENT'].startswith('rs'):
+               rsid = fields['SNP_ID_CURRENT']
+            else:
+               rsid = 'rs' + fields['SNP_ID_CURRENT']
+            chrom = None
+            position = None
+            if fields['CHR_ID']:
+               chrom = fields['CHR_ID']
+            if fields['CHR_POS']:
+               position = long(fields['CHR_POS'])
+            if chrom is None or position is None:
+               yield PublishedSNVAssociation(chrom = None, position = None, rsid = rsid, trait = study_trait,  pvalue = pvalue, pubmed = pubmed)
+               pass
+            else:
+               yield PublishedSNVAssociation(chrom = chrom, position = position, rsid = rsid, trait = study_trait,  pvalue = pvalue, pubmed = pubmed)
+         else:
+            m = chr_pos_pattern.match(fields['SNPS'])
+            if not m:
+               continue
+            chrom =  m.group(1)
+            position = long(m.group(2))
+            yield PublishedSNVAssociation(chrom = chrom, position = position, rsid = None, trait = study_trait,  pvalue = pvalue, pubmed = pubmed)
+
+
+def get_known_haplotype_associations_tsv(catalog_associations_file, trait = None):
+   pass
 
 # ucsc_snp_file -- from UCSC Table Browser: group = Variaion, track = All SNPs (XYZ), table = snpXYZ
 # rsIds --  set() of rs identifiers that needs to be mapped to chromosome and position
