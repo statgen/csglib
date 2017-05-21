@@ -95,6 +95,29 @@ def get_known_snv_associations_tsv(catalog_associations_file, trait = None):
 def get_known_haplotype_associations_tsv(catalog_associations_file, trait = None):
    pass
 
+# dbsnp_file -- VCF file from dbSNP
+# rsIds -- set() of rs identifiers that needs to be mapped to chromosome and position
+def map2dbsnp(rsids, dbsnp_file):
+   rsid2pos = dict()
+   with gzip.GzipFile(dbsnp_file, 'r') as ifile:
+      for line in ifile:
+         if line.startswith('#'):
+            if line.startswith('##'):
+               continue
+            else:
+               break
+      if any(x != y for (x, y) in zip(line.rstrip().split('\t'), ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO'])):
+         raise Exception('Error while parsing VCF header!')
+      for line in ifile:
+         fields = line.rstrip().split('\t')
+         chrom = fields[0]
+         position = long(fields[1])
+         rsid = fields[2]
+
+         if rsid in rsids:
+            rsid2pos[rsid] = (chrom, position)
+   return rsid2pos
+
 # ucsc_snp_file -- from UCSC Table Browser: group = Variaion, track = All SNPs (XYZ), table = snpXYZ
 # rsIds --  set() of rs identifiers that needs to be mapped to chromosome and position
 def map2ucsc(rsIds, ucsc_snp_file):
