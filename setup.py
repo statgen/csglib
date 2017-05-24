@@ -46,6 +46,7 @@ setup(
     'cython',
     'numpy',
   ],
+  scripts = ['csg/gwas/IndependentHits', 'csg/gwas/InflationFromFile', 'csg/pedigree/trios/TrioPuller'],
 )
 
 

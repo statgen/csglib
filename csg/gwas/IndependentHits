@@ -1,5 +1,5 @@
 import argparse
-from independent import *
+from csg.gwas.independent import *
 
 argparser = argparse.ArgumentParser('Get LD independent association signals from METAL output.')
 argparser.add_argument('--in', metavar = 'file', dest = 'assoc_file', required = True, type = str, help = 'Input file with association results in METAL format. MarkerName must follow CHR:POSITION:REF:ALT format.')

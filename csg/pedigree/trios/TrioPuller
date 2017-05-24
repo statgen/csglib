@@ -1,5 +1,5 @@
 import argparse
-import trios
+from csg.pedigree import trios
 
 argparser = argparse.ArgumentParser(description = 'Pulls trios out of the PC-relate/KING output.')
 argparser.add_argument('--kinship', metavar = 'file', dest = 'in_kinship_file', required = True, help = 'File with estimated kinship coefficients (KING or PC-relate format).')
