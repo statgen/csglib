@@ -1,0 +1,33 @@
+import argparse
+from independent import *
+
+argparser = argparse.ArgumentParser('Get LD independent association signals from METAL output.')
+argparser.add_argument('--in', metavar = 'file', dest = 'assoc_file', required = True, type = str, help = 'Input file with association results in METAL format. MarkerName must follow CHR:POSITION:REF:ALT format.')
+argparser.add_argument('--pvalue-threshold', metavar = 'float', dest = 'pvalue_threshold', required = True, type = float, help = 'Significance threshold for association p-value.')
+argparser.add_argument('--rsq-threshold', metavar = 'float', dest = 'rsq_threshold', required = True, type = float, help = 'Minimal r^2 (linkage-disequilibrium) between linked variants.')
+argparser.add_argument('--locus-length', metavar = 'base-pairs', dest = 'max_locus_bp', required = True, type = long, help = 'Maximal length of independent locus in base-pairs.')
+argparser.add_argument('--vcf', metavar = 'file', dest = 'in_VCFs', required = True, nargs = '+', type = str, help = 'VCF file with haplotypes to compute linkage-disequilibrium between variants.')
+argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file name.')
+
+def get_associations(assoc_file):
+   with open(assoc_file, 'r') as ifile:
+      line = ifile.readline()
+      if line is None:
+         return
+      header = line.rstrip().split('\t')
+      for line in ifile:
+         fields = dict(zip(header, line.rstrip().split('\t')))
+         chrom, position, ref, alt = fields['MarkerName'].split(':')
+         pvalue = fields['P-value']
+         yield Association(chrom = chrom, position = long(position), ref = ref , alt = alt, pvalue = float(pvalue))
+
+def write_associations(associations, out_file):
+   with open(out_file, 'w') as ofile:
+      ofile.write('CHROM\tPOSITION\tREF\tALT\tPVALUE\n')
+      for association in associations:
+         ofile.write('%s\t%d\t%s\t%s\t%g\n' % association)
+
+
+if __name__ == '__main__':
+   args = argparser.parse_args()
+   write_associations(get_independent_associations(get_associations(args.assoc_file), args.pvalue_threshold, args.rsq_threshold, args.max_locus_bp, args.in_VCFs), args.out_file)
