@@ -41,7 +41,7 @@ def correct(in_file, pvalue_field, corrected_pvalue_field, sep, correction_facto
          for line in ifile:
             fields = line.rstrip().split(sep_char)
             pvalue = float(fields[pvalue_idx])
-            corr_pvalue = 1.0 - scipy.stats.chi2.cdf(scipy.stats.chi2.ppf(1.0 - pvalue, 1) / correction_factor, 1)
+            corr_pvalue = scipy.stats.chi2.sf(scipy.stats.chi2.isf(pvalue, 1) / correction_factor, 1)
             ofile.write('%s' % sep_char.join(fields))
             ofile.write('%s%g\n' % (sep_char, corr_pvalue))
       else:
