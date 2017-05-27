@@ -1,4 +1,5 @@
 import argparse
+import gzip
 from csg.gwas.independent import *
 
 argparser = argparse.ArgumentParser('Get LD independent association signals from METAL output.')
@@ -10,7 +11,7 @@ argparser.add_argument('--vcf', metavar = 'file', dest = 'in_VCFs', required = T
 argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file name.')
 
 def get_associations(assoc_file):
-   with open(assoc_file, 'r') as ifile:
+   with gzip.GzipFile(assoc_file, 'r') as ifile:
       line = ifile.readline()
       if line is None:
          return
