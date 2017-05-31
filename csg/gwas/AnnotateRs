@@ -150,10 +150,10 @@ def annotate(in_file, chrom_field_regex, position_field_regex, allele1_field_reg
  
          if region_chrom != chrom or position < region_start_position or region_end_position < position:
             region_chrom = chrom
-            region_start_position = position
+            region_start_position = position - region_step_size
             region_end_position = position + region_step_size
             region = load_region(in_vcf, region_chrom, region_start_position, region_end_position)   
-          
+
          variants = region.positions.get(position, None)
          if variants is None:
             rsid = 'NA'
