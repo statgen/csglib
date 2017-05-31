@@ -1,4 +1,5 @@
 import gzip
+import sys
 import re
 import argparse
 import pysam
@@ -102,7 +103,8 @@ def annotate(in_file, chrom_field_regex, position_field_regex, allele1_field_reg
       ofile.write('%cRsId\n' % sep_char)
 
       region_chrom = ''
-      region_position = -1
+      region_start_position = sys.maxint
+      region_end_position = -1
       region = None
       region_step_size = 1000000
 
@@ -146,10 +148,11 @@ def annotate(in_file, chrom_field_regex, position_field_regex, allele1_field_reg
          else:
             allele2 = fields[allele2_field_idx].upper()
  
-         if region_chrom != chrom or region_position < position:
+         if region_chrom != chrom or position < region_start_position or region_end_position < position:
             region_chrom = chrom
-            region_position = position + region_step_size
-            region = load_region(in_vcf, region_chrom, position, region_position)   
+            region_start_position = position
+            region_end_position = position + region_step_size
+            region = load_region(in_vcf, region_chrom, region_start_position, region_end_position)   
           
          variants = region.positions.get(position, None)
          if variants is None:
