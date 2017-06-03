@@ -1,0 +1,996 @@
+import sys
+import argparse
+import pysam
+from contextlib import closing
+from collections import namedtuple
+from collections import OrderedDict
+import gzip
+import itertools
+
+epacts_headers = {
+           'firth': ['#CHROM', 'BEGIN', 'END', 'MARKER_ID', 'NS', 'AC', 'CALLRATE', 'MAF', 'PVALUE', 'BETA', 'SEBETA', 'CHISQ', 'NS.CASE', 'NS.CTRL', 'AF.CASE', 'AF.CTRL'],
+           'emmax': ['#CHROM', 'BEG', 'END', 'MARKER_ID', 'NS', 'AC', 'CALLRATE', 'GENOCNT', 'MAF', 'STAT', 'PVALUE', 'BETA', 'SEBETA', 'R2', 'CTRLCNT', 'CASECNT']
+        }
+
+snptest_headers = {
+           'frequentist1': ['alternate_ids', 'rsid', 'chromosome', 'position', 'alleleA', 'alleleB', 'index', 'average_maximum_posterior_call', 'info',
+               'cohort_1_AA', 'cohort_1_AB', 'cohort_1_BB', 'cohort_1_NULL', 'all_AA', 'all_AB', 'all_BB', 'all_NULL', 'all_total', 'cases_AA', 'cases_AB', 'cases_BB', 'cases_NULL', 'cases_total',
+               'controls_AA', 'controls_AB', 'controls_BB', 'controls_NULL', 'controls_total', 'all_maf', 'cases_maf', 'controls_maf', 'missing_data_proportion',
+               'het_OR', 'het_OR_lower', 'het_OR_upper', 'hom_OR', 'hom_OR_lower', 'hom_OR_upper', 'all_OR', 'all_OR_lower', 'all_OR_upper',
+               'frequentist_add_pvalue', 'frequentist_add_info', 'frequentist_add_beta_1', 'frequentist_add_se_1', 'comment']
+        }
+
+quicktest_headers = {
+           'default': ['chr', 'rsid', 'pos', 'allele_A', 'allele_B', 'all_AA', 'all_AB', 'all_BB', 'cases_AA', 'cases_AB', 'cases_BB',
+           'controls_AA', 'controls_AB', 'controls_BB', 'all_maf', 'cases_maf',	'controls_maf',	'all_hwe', 'cases_hwe',	'controls_hwe',
+           'Imputed', 'info', 'beta', 'SE', 'P']
+        }
+
+argparser = argparse.ArgumentParser('Tool for harmonizing EPACTS, SNPTEST and other formats.')
+sub_argparser = argparser.add_subparsers(title = 'supported commands', description = '', help = '', dest = 'invoked_command')
+
+epacts_argparser = sub_argparser.add_parser('epacts', help = 'Harmonizes EPACTS (Firth, EMMAX) file format.')
+epacts_argparser.add_argument('--test', metavar = 'name', dest = 'test', required = True, choices = epacts_headers.keys(), help = '')
+epacts_argparser.add_argument('--ref', metavar = 'name', dest = 'reference_vcf', required = True, help = 'Imputation reference VCF (only first 8 fields are required) indexed using tabix.')
+epacts_argparser.add_argument('--impq', metavar = 'name', dest = 'imputation_file', required = True, help = 'Imputed VCF (only first 8 fields are required) with imputation R2 values in INFO field. Compressed with gzip/bgzip.')
+epacts_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = '')
+epacts_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = '')
+epacts_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = '')
+epacts_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = '')
+epacts_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = '')
+
+snptest_argparser = sub_argparser.add_parser('snptest', help = 'Harmonizes SNPTEST file format.')
+snptest_argparser.add_argument('--test', metavar = 'name', dest = 'test', required = True, choices = snptest_headers.keys(), help = '')
+snptest_argparser.add_argument('--ref', metavar = 'name', dest = 'reference_vcf', required = True, help = 'Imputation reference VCF (only first 8 fields are required) indexed using tabix.')
+snptest_argparser.add_argument('--impq', metavar = 'name', dest = 'imputation_file', required = False, help = 'Imputed VCF (only first 8 fields are required) with imputation R2 values in INFO field. Compressed with gzip/bgzip.')
+snptest_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = '')
+snptest_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = '')
+snptest_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = '')
+snptest_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = '')
+snptest_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = '')
+
+quicktest_argparser = sub_argparser.add_parser('quicktest', help = 'Harmonizes Quicktest file format.')
+quicktest_argparser.add_argument('--ref', metavar = 'name', dest = 'reference_vcf', required = True, help = 'Imputation reference VCF (only first 8 fields are required) indexed using tabix.')
+quicktest_argparser.add_argument('--impq', metavar = 'name', dest = 'imputation_file', required = False, help = 'Imputed VCF (only first 8 fields are required) with imputation R2 values in INFO field. Compressed with gzip/bgzip.')
+quicktest_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = '')
+quicktest_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = '')
+quicktest_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = '')
+quicktest_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = '')
+quicktest_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = '')
+
+
+
+Region = namedtuple('Region', ['chrom', 'start', 'end', 'variants'])
+Alleles = namedtuple('Alleles', ['ref', 'alt'])
+counters = ['n_variants', 'n_removed_variants', 'n_remained_variants',
+         'duplicated', 'not_in_panel', 'allele_mismatch', 'pvalue_is_na', 'pvalue_le_zero', 'pvalue_ge_one',
+         'info_is_na', 'info_lt_min', 'se_is_na', 'se_le_zero', 'se_gt_max', 'mac_lt_min']
+
+
+def load_reference_region(in_vcf, chrom, start_bp, end_bp):
+   region = Region(chrom = chrom, start = start_bp, end = end_bp, variants = dict())
+   if start_bp is not None and start_bp > 0:
+      start_bp -= 1
+   with closing(pysam.Tabixfile(in_vcf)) as tabix:
+      for row in tabix.fetch(chrom, start_bp, end_bp):
+         fields = row.split('\t', 5)
+         position = long(fields[1])
+         if position not in region.variants:
+            region.variants[position] = list()
+         region.variants[position].append(Alleles(fields[3], set(fields[4].split(','))))
+   return region
+
+
+def imputation_quality(in_file):
+   vcf_header = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO']
+   snpstat_header = ['SNPID', 'RSID', 'chromosome', 'position', 'A_allele', 'B_allele', 'minor_allele', 'major_allele',
+           'AA', 'AB', 'BB', 'AA_calls', 'AB_calls', 'BB_calls', 'MAF', 'HWE', 'missing', 'missing_calls', 'information']
+   impq = dict()
+   with gzip.GzipFile(in_file, 'r') as ifile:
+      for line in ifile:
+        if not line.startswith('##'): #skip all possible VCF-like comments
+           break
+      if line.startswith('\t'.join(vcf_header)): # VCF
+         for line in ifile:
+            fields = line.rstrip().split('\t', 8)
+            chrom = fields[0]
+            position = fields[1]
+            ref = fields[3]
+            alt = fields[4]
+            name = chrom + ':' + position + ':' + ref + ':' + alt
+            for key_value in fields[7].split(';'):
+               if key_value.startswith('R2='):
+                  impq[name] = key_value.split('=')[1]
+                  break
+      elif line.startswith('\t'.join(snpstat_header)): # snpstat
+         for line in ifile:
+            fields = line.rstrip().split('\t')
+            chrom = fields[2]
+            if chrom == 'NA' or chrom == 'na': # if chromosome fields is NA, then try to extract chromosome name from SNPID fields assuming CHR:POS... or CHR_POS... format.
+               chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[0])).lstrip('0')
+            name = chrom + ':' + fields[3] + ':' + fields[4] + ':' + fields[5]
+            impq[name] = fields[18]
+      else:
+         raise Exception('Provided file format with imputation qualities is not supported!')
+   return impq
+
+
+def duplicates_firth(in_file, impq):
+   with gzip.GzipFile(in_file, 'r') as ifile:
+      line = ifile.readline()
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+
+      if len(epacts_headers['firth']) != len(header) or any(x != y for x, y in zip(epacts_headers['firth'], header)):
+         raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('#CHROM')
+      position_idx = header.index('BEGIN')
+      markerid_idx = header.index('MARKER_ID')
+
+      variants = dict()
+      n_variants = 0
+      for line in ifile:
+         if line.startswith('#'): # skip if comment or repeated header (left after merging)
+            continue
+         n_variants += 1
+         fields = line.rstrip().split('\t')
+         chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[chrom_idx])).lstrip('0')
+         markerid = fields[markerid_idx]
+         noncoded_allele, coded_allele = markerid.split('_')[1].split('/')
+         name = chrom + ':' + fields[position_idx] + ':' + noncoded_allele + ':' + coded_allele
+         info_str = impq.get(name, None)
+         if info_str is None:
+            info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + coded_allele + ':' + noncoded_allele, 'NA')
+
+         if info_str == 'NA':
+            info = float('-inf')
+         else:
+            info = float(info_str)
+
+         if name not in variants:
+            variants[name] = [(info, n_variants)]
+         else:
+            variants[name].append((info, n_variants))
+
+      duplicates = set()
+      for variant, infos in variants.iteritems():
+         if len(infos) > 1:
+            sorted_infos = sorted(infos, key = lambda x: x[0], reverse = True)
+            for i in xrange(1, len(sorted_infos)):
+               duplicates.add(sorted_infos[i][1])
+   return duplicates
+
+
+def harmonize_firth(in_file, reference_vcf, imputation_file, min_info, min_mac, max_se, out_file):
+   impq = imputation_quality(imputation_file)
+   duplicates = duplicates_firth(in_file, impq)
+
+   with gzip.GzipFile(in_file, 'r') as ifile, gzip.GzipFile(out_file, 'w') as ofile:
+      line = ifile.readline()
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+
+      if len(epacts_headers['firth']) != len(header) or any(x != y for x, y in zip(epacts_headers['firth'], header)):
+          raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('#CHROM')
+      position_idx = header.index('BEGIN')
+      markerid_idx = header.index('MARKER_ID')
+      pvalue_idx = header.index('PVALUE')
+      effect_idx = header.index('BETA')
+      se_idx = header.index('SEBETA')
+      total_idx = header.index('NS')
+      cases_total_idx = header.index('NS.CASE')
+      controls_total_idx = header.index('NS.CTRL')
+      maf_idx = header.index('MAF')
+      ac_idx = header.index('AC')
+
+      ofile.write('UNIQUE_ID\tCHR\tPOSITION\tREF_ALLELE\tALT_ALLELE\tCODED_ALLELE\tNONCODED_ALLELE\tTOTAL\tCASES\tCONTROLS\tAF\tMAF\tEFFECT\tSE\tPVALUE\tINFO\n')
+
+      summary = OrderedDict(zip(counters, [0] * len(counters)))
+      reference = Region("", 0, 0, None)
+
+      for line in ifile:
+         if line.startswith('#'): # skip if comment or repeated header (left after merging)
+            continue
+
+         summary['n_variants'] += 1
+
+         if summary['n_variants'] in duplicates:
+            summary['duplicated'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         fields = line.rstrip().split('\t')
+         chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[chrom_idx])).lstrip('0')
+         position = long(fields[position_idx])
+
+         if reference.chrom != chrom or reference.start > position or position > reference.end:
+            reference = load_reference_region(reference_vcf, chrom, position, position + 1000000)
+
+         reference_alleles = reference.variants.get(position, None)
+         if reference_alleles is None:
+            summary['not_in_panel'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         markerid = fields[markerid_idx]
+         noncoded_allele, coded_allele = markerid.split('_')[1].split('/')
+         ref_allele = None
+         alt_allele = None
+         for alleles in reference_alleles:
+            if noncoded_allele == alleles.ref and coded_allele in alleles.alt:
+               ref_allele = noncoded_allele
+               alt_allele = coded_allele
+               break
+            elif noncoded_allele in alleles.alt and coded_allele == alleles.ref:
+               ref_allele = coded_allele
+               alt_allele = noncoded_allele
+               break
+         if ref_allele is None or alt_allele is None:
+            summary['allele_mismatch'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele, 'NA')
+
+         if info_str == 'NA':
+            summary['info_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info = float(info_str)
+         if info < min_info:
+            summary['info_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         total = int(fields[total_idx])
+         maf = float(fields[maf_idx])
+         mac = 2 * total * maf
+         if mac < min_mac:
+            summary['mac_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         af = float(fields[ac_idx]) / (2.0 * total)
+
+         if fields[pvalue_idx] == 'NA':
+            summary['pvalue_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            pvalue = float(fields[pvalue_idx])
+            if pvalue <= 0.0:
+               summary['pvalue_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif pvalue >= 1.0:
+               summary['pvalue_ge_one'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         if fields[se_idx] == 'NA':
+            summary['se_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            se = float(fields[se_idx])
+            if se <= 0:
+               summary['se_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif se > max_se:
+               summary['se_gt_max'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         summary['n_remained_variants'] += 1
+
+         ofile.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%g\t%s\t%s\t%s\t%s\t%s\n' % (
+            chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele,
+            chrom,
+            fields[position_idx],
+            ref_allele,
+            alt_allele,
+            coded_allele,
+            noncoded_allele,
+            fields[total_idx],
+            fields[cases_total_idx],
+            fields[controls_total_idx],
+            af,
+            fields[maf_idx],
+            fields[effect_idx],
+            fields[se_idx],
+            fields[pvalue_idx],
+            info_str
+          ))
+
+      return summary
+
+
+def duplicates_emmax(in_file, impq):
+   with gzip.GzipFile(in_file, 'r') as ifile:
+      line = ifile.readline()
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+
+      if len(epacts_headers['emmax']) != len(header) or any(x != y for x, y in zip(epacts_headers['emmax'], header)):
+         raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('#CHROM')
+      position_idx = header.index('BEG')
+      markerid_idx = header.index('MARKER_ID')
+
+      variants = dict()
+      n_variants = 0
+      for line in ifile:
+         if line.startswith('#'): # skip if comment or repeated header (left after merging)
+            continue
+         n_variants += 1
+         fields = line.rstrip().split('\t')
+         chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[chrom_idx])).lstrip('0')
+         markerid = fields[markerid_idx]
+         noncoded_allele, coded_allele = markerid.split('_')[1].split('/')
+         name = chrom + ':' + fields[position_idx] + ':' + noncoded_allele + ':' + coded_allele
+         info_str = impq.get(name, None)
+         if info_str is None:
+            info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + coded_allele + ':' + noncoded_allele, 'NA')
+
+         if info_str == 'NA':
+            info = float('-inf')
+         else:
+            info = float(info_str)
+
+         if name not in variants:
+            variants[name] = [(info, n_variants)]
+         else:
+            variants[name].append((info, n_variants))
+
+      duplicates = set()
+      for variant, infos in variants.iteritems():
+         if len(infos) > 1:
+            sorted_infos = sorted(infos, key = lambda x: x[0], reverse = True)
+            for i in xrange(1, len(sorted_infos)):
+               duplicates.add(sorted_infos[i][1])
+   return duplicates
+
+
+def harmonize_emmax(in_file, reference_vcf, imputation_file, min_info, min_mac, max_se, out_file):
+   impq = imputation_quality(imputation_file)
+   duplicates = duplicates_emmax(in_file, impq)
+
+   with gzip.GzipFile(in_file, 'r') as ifile, gzip.GzipFile(out_file, 'w') as ofile:
+      line = ifile.readline()
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+
+      if len(epacts_headers['emmax']) != len(header) or any(x != y for x, y in zip(epacts_headers['emmax'], header)):
+          raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('#CHROM')
+      position_idx = header.index('BEG')
+      markerid_idx = header.index('MARKER_ID')
+      pvalue_idx = header.index('PVALUE')
+      effect_idx = header.index('BETA')
+      se_idx = header.index('SEBETA')
+      total_idx = header.index('NS')
+      cases_total_idx = header.index('CASECNT')
+      controls_total_idx = header.index('CTRLCNT')
+      maf_idx = header.index('MAF')
+      ac_idx = header.index('AC')
+
+      ofile.write('UNIQUE_ID\tCHR\tPOSITION\tREF_ALLELE\tALT_ALLELE\tCODED_ALLELE\tNONCODED_ALLELE\tTOTAL\tCASES\tCONTROLS\tAF\tMAF\tEFFECT\tSE\tPVALUE\tINFO\n')
+
+      summary = OrderedDict(zip(counters, [0] * len(counters)))
+      reference = Region("", 0, 0, None)
+
+      for line in ifile:
+         if line.startswith('#'): # skip if comment or repeated header (left after merging)
+            continue
+
+         summary['n_variants'] += 1
+
+         if summary['n_variants'] in duplicates:
+            summary['duplicated'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         fields = line.rstrip().split('\t')
+         chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[chrom_idx])).lstrip('0')
+         position = long(fields[position_idx])
+
+         if reference.chrom != chrom or reference.start > position or position > reference.end:
+            reference = load_reference_region(reference_vcf, chrom, position, position + 1000000)
+
+         reference_alleles = reference.variants.get(position, None)
+         if reference_alleles is None:
+            summary['not_in_panel'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         markerid = fields[markerid_idx]
+         noncoded_allele, coded_allele = markerid.split('_')[1].split('/')
+         ref_allele = None
+         alt_allele = None
+         for alleles in reference_alleles:
+            if noncoded_allele == alleles.ref and coded_allele in alleles.alt:
+               ref_allele = noncoded_allele
+               alt_allele = coded_allele
+               break
+            elif noncoded_allele in alleles.alt and coded_allele == alleles.ref:
+               ref_allele = coded_allele
+               alt_allele = noncoded_allele
+               break
+         if ref_allele is None or alt_allele is None:
+            summary['allele_mismatch'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele, 'NA')
+
+         if info_str == 'NA':
+            summary['info_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info = float(info_str)
+         if info < min_info:
+            summary['info_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         total = int(fields[total_idx])
+         maf = float(fields[maf_idx])
+         mac = 2 * total * maf
+         if mac < min_mac:
+            summary['mac_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         af = float(fields[ac_idx]) / (2.0 * total)
+
+         if fields[pvalue_idx] == 'NA':
+            summary['pvalue_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            pvalue = float(fields[pvalue_idx])
+            if pvalue <= 0.0:
+               summary['pvalue_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif pvalue >= 1.0:
+               summary['pvalue_ge_one'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         if fields[se_idx] == 'NA':
+            summary['se_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            se = float(fields[se_idx])
+            if se <= 0:
+               summary['se_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif se > max_se:
+               summary['se_gt_max'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         summary['n_remained_variants'] += 1
+
+         ofile.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%g\t%s\t%s\t%s\t%s\t%s\n' % (
+            chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele,
+            chrom,
+            fields[position_idx],
+            ref_allele,
+            alt_allele,
+            coded_allele,
+            noncoded_allele,
+            fields[total_idx],
+            sum([int(x) for x in fields[cases_total_idx].split('/')]),
+            sum([int(x) for x in fields[controls_total_idx].split('/')]),
+            af,
+            fields[maf_idx],
+            fields[effect_idx],
+            fields[se_idx],
+            fields[pvalue_idx],
+            info_str
+          ))
+
+      return summary
+
+
+def duplicates_frequentist1(in_file, impq):
+   with gzip.GzipFile(in_file, 'r') as ifile:
+      for line in ifile:
+         if not line.startswith('#'): # skip comments
+            break
+      if not line:
+         return
+      header = line.rstrip().split(' ')
+      if any(x not in header for x in snptest_headers['frequentist1']): # less strict header requirement than the one below
+      #if len(snptest_headers['frequentist1']) != len(header) or any(x != y for x, y in zip(snptest_headers['frequentist1'], header)):
+         raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('chromosome')
+      alternateid_idx = header.index('alternate_ids')
+      position_idx = header.index('position')
+      alleleA_idx = header.index('alleleA')
+      alleleB_idx = header.index('alleleB')
+      info_idx = header.index('info')
+
+      variants = dict()
+      n_variants = 0
+      for line in ifile:
+         if line.startswith('#'): # skip if comments
+            continue
+         if line.startswith(snptest_headers['frequentist1'][0]): # skip repeated header (left after merging)
+            continue
+
+         n_variants += 1
+
+         fields = line.rstrip().split(' ')
+
+         chrom = fields[chrom_idx]
+         if chrom == 'NA' or chrom == 'na': # if chromosome fields is NA, then try to extract chromosome name from alternate_id fields assuming CHR:POS... or CHR_POS... format.
+            chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[alternateid_idx])).lstrip('0')
+
+         name = chrom + ':' + fields[position_idx] + ':' + fields[alleleA_idx] + ':' + fields[alleleB_idx]
+
+         if impq:
+            info_str = impq.get(name, None)
+            if info_str is None:
+               info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + fields[alleleB_idx] + ':' + fields[alleleA_idx], 'NA')
+         else:
+            info_str = fields[info_idx]
+
+         if info_str == 'NA':
+            info = float('-inf')
+         else:
+            info = float(info_str)
+
+         if name not in variants:
+            variants[name] = [(info, n_variants)]
+         else:
+            variants[name].append((info, n_variants))
+
+      duplicates = set()
+      for variant, infos in variants.iteritems():
+         if len(infos) > 1:
+            sorted_infos = sorted(infos, key = lambda x: x[0], reverse = True)
+            for i in xrange(1, len(sorted_infos)):
+               duplicates.add(sorted_infos[i][1])
+   return duplicates
+
+
+def harmonize_frequentist1(in_file, reference_vcf, imputation_file, min_info, min_mac, max_se, out_file):
+   impq = None
+   if imputation_file:
+      impq = imputation_quality(imputation_file)
+   duplicates = duplicates_frequentist1(in_file, impq)
+   with gzip.GzipFile(in_file, 'r') as ifile, gzip.GzipFile(out_file, 'w') as ofile:
+      for line in ifile:
+         if not line.startswith('#'): # skip comments
+            break
+      if not line:
+         return
+      header = line.rstrip().split(' ')
+      if any(x not in header for x in snptest_headers['frequentist1']): # less strict header requirement than the one below
+      #if len(snptest_headers['frequentist1']) != len(header) or any(x != y for x, y in zip(snptest_headers['frequentist1'], header)):
+          raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('chromosome')
+      alternateid_idx = header.index('alternate_ids')
+      position_idx = header.index('position')
+      alleleA_idx = header.index('alleleA')
+      alleleB_idx = header.index('alleleB')
+      info_idx = header.index('info')
+      pvalue_idx = header.index('frequentist_add_pvalue')
+      effect_idx = header.index('frequentist_add_beta_1')
+      se_idx = header.index('frequentist_add_se_1')
+      total_idx = header.index('all_total')
+      cases_total_idx = header.index('cases_total')
+      controls_total_idx = header.index('controls_total')
+      maf_idx = header.index('all_maf')
+      all_ab_idx = header.index('all_AB')
+      all_bb_idx = header.index('all_BB')
+
+      ofile.write('UNIQUE_ID\tCHR\tPOSITION\tREF_ALLELE\tALT_ALLELE\tCODED_ALLELE\tNONCODED_ALLELE\tTOTAL\tCASES\tCONTROLS\tAF\tMAF\tEFFECT\tSE\tPVALUE\tINFO\n')
+
+      summary = OrderedDict(zip(counters, [0] * len(counters)))
+      reference = Region("", 0, 0, None)
+
+      for line in ifile:
+         if line.startswith('#'): # skip if comments
+            continue
+         if line.startswith(snptest_headers['frequentist1'][0]): # skip repeated header (left after merging)
+            continue
+
+         summary['n_variants'] += 1
+
+         if summary['n_variants'] in duplicates:
+            summary['duplicated'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         fields = line.rstrip().split(' ')
+
+         chrom = fields[chrom_idx].lstrip('0')
+         if chrom == 'NA' or chrom == 'na': # if chromosome fields is NA, then try to extract chromosome name from alternate_id fields assuming CHR:POS... or CHR_POS... format.
+            chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[alternateid_idx])).lstrip('0')
+
+         position = long(fields[position_idx])
+         if reference.chrom != chrom or reference.start > position or position > reference.end:
+            reference = load_reference_region(reference_vcf, chrom, position, position + 1000000)
+
+         reference_alleles = reference.variants.get(position, None)
+         if reference_alleles is None:
+            summary['not_in_panel'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         noncoded_allele = fields[alleleA_idx]
+         coded_allele = fields[alleleB_idx]
+         ref_allele = None
+         alt_allele = None
+         for alleles in reference_alleles:
+            if noncoded_allele == alleles.ref and coded_allele in alleles.alt:
+               ref_allele = noncoded_allele
+               alt_allele = coded_allele
+               break
+            elif noncoded_allele in alleles.alt and coded_allele == alleles.ref:
+               ref_allele = coded_allele
+               alt_allele = noncoded_allele
+               break
+         if ref_allele is None or alt_allele is None:
+            summary['allele_mismatch'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         if impq:
+            info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele, 'NA')
+         else:
+            info_str = fields[info_idx]
+
+         if info_str == 'NA':
+            summary['info_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info = float(info_str)
+         if info < min_info:
+            summary['info_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         total = int(fields[total_idx])
+         maf = float(fields[maf_idx])
+         mac = 2 * total * maf
+         if mac < min_mac:
+            summary['mac_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         af = (float(fields[all_ab_idx]) + 2.0 * float(fields[all_bb_idx])) / (2.0 * total)
+
+         if fields[pvalue_idx] == 'NA':
+            summary['pvalue_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            pvalue = float(fields[pvalue_idx])
+            if pvalue <= 0.0:
+               summary['pvalue_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif pvalue >= 1.0:
+               summary['pvalue_ge_one'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         if fields[se_idx] == 'NA':
+            summary['se_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            se = float(fields[se_idx])
+            if se <= 0:
+               summary['se_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif se > max_se:
+               summary['se_gt_max'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         summary['n_remained_variants'] += 1
+
+         ofile.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%g\t%s\t%s\t%s\t%s\t%s\n' % (
+            chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele,
+            chrom,
+            fields[position_idx],
+            ref_allele,
+            alt_allele,
+            coded_allele,
+            noncoded_allele,
+            fields[total_idx],
+            fields[cases_total_idx],
+            fields[controls_total_idx],
+            af,
+            fields[maf_idx],
+            fields[effect_idx],
+            fields[se_idx],
+            fields[pvalue_idx],
+            info_str
+          ))
+
+      return summary
+
+
+def duplicates_quicktest(in_file, impq):
+   with gzip.GzipFile(in_file, 'r') as ifile:
+      for line in ifile:
+         if not line.startswith('#'): # skip comments
+            break
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+      if any(x not in header for x in quicktest_headers['default']): # less strict header requirement than the one below
+      #if len(quicktest_headers['default']) != len(header) or any(x != y for x, y in zip(quicktest_headers['default'], header)):
+         raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('chr')
+      rsid_idx = header.index('rsid')
+      position_idx = header.index('pos')
+      alleleA_idx = header.index('allele_A')
+      alleleB_idx = header.index('allele_B')
+      info_idx = header.index('info')
+
+      variants = dict()
+      n_variants = 0
+      for line in ifile:
+         if line.startswith('#'): # skip if comments
+            continue
+         if line.startswith(quicktest_headers['default'][0]): # skip repeated header (left after merging)
+            continue
+
+         n_variants += 1
+
+         fields = line.rstrip().split('\t')
+
+         chrom = fields[chrom_idx]
+         if chrom == 'NA' or chrom == 'na': # if chromosome fields is NA, then try to extract chromosome name from rsid fields assuming CHR:POS... or CHR_POS... format.
+            chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[rsid_idx])).lstrip('0')
+
+         name = chrom + ':' + fields[position_idx] + ':' + fields[alleleA_idx] + ':' + fields[alleleB_idx]
+
+         if impq:
+            info_str = impq.get(name, None)
+            if info_str is None:
+               info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + fields[alleleB_idx] + ':' + fields[alleleA_idx], 'NA')
+         else:
+            info_str = fields[info_idx]
+
+         if info_str == 'NA':
+            info = float('-inf')
+         else:
+            info = float(info_str)
+
+         if name not in variants:
+            variants[name] = [(info, n_variants)]
+         else:
+            variants[name].append((info, n_variants))
+
+      duplicates = set()
+      for variant, infos in variants.iteritems():
+         if len(infos) > 1:
+            sorted_infos = sorted(infos, key = lambda x: x[0], reverse = True)
+            for i in xrange(1, len(sorted_infos)):
+               duplicates.add(sorted_infos[i][1])
+   return duplicates
+
+
+def harmonize_quicktest(in_file, reference_vcf, imputation_file, min_info, min_mac, max_se, out_file):
+   impq = None
+   if imputation_file:
+      impq = imputation_quality(imputation_file)
+   duplicates = duplicates_quicktest(in_file, impq)
+   with gzip.GzipFile(in_file, 'r') as ifile, gzip.GzipFile(out_file, 'w') as ofile:
+      for line in ifile:
+         if not line.startswith('#'): # skip comments
+            break
+      if not line:
+         return
+      header = line.rstrip().split('\t')
+      if any(x not in header for x in quicktest_headers['default']): # less strict header requirement than the one below
+      #if len(quicktest_headers['default']) != len(header) or any(x != y for x, y in zip(quicktest_headers['default'], header)):
+          raise Exception('File header does not match expected format!')
+
+      chrom_idx = header.index('chr')
+      rsid_idx = header.index('rsid')
+      position_idx = header.index('pos')
+      alleleA_idx = header.index('allele_A')
+      alleleB_idx = header.index('allele_B')
+      info_idx = header.index('info')
+      pvalue_idx = header.index('P')
+      effect_idx = header.index('beta')
+      se_idx = header.index('SE')
+      all_AA_idx = header.index('all_AA')
+      all_AB_idx = header.index('all_AB')
+      all_BB_idx = header.index('all_BB')
+      cases_AA_idx = header.index('cases_AA')
+      cases_AB_idx = header.index('cases_AB')
+      cases_BB_idx = header.index('cases_BB')
+      controls_AA_idx = header.index('controls_AA')
+      controls_AB_idx = header.index('controls_AB')
+      controls_BB_idx = header.index('controls_BB')
+      maf_idx = header.index('all_maf')
+
+      ofile.write('UNIQUE_ID\tCHR\tPOSITION\tREF_ALLELE\tALT_ALLELE\tCODED_ALLELE\tNONCODED_ALLELE\tTOTAL\tCASES\tCONTROLS\tAF\tMAF\tEFFECT\tSE\tPVALUE\tINFO\n')
+
+      summary = OrderedDict(zip(counters, [0] * len(counters)))
+      reference = Region("", 0, 0, None)
+
+      for line in ifile:
+         if line.startswith('#'): # skip if comments
+            continue
+         if line.startswith(quicktest_headers['default'][0]): # skip repeated header (left after merging)
+            continue
+
+         summary['n_variants'] += 1
+
+         if summary['n_variants'] in duplicates:
+            summary['duplicated'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         fields = line.rstrip().split('\t')
+
+         chrom = fields[chrom_idx].lstrip('0')
+         if chrom == 'NA' or chrom == 'na': # if chromosome fields is NA, then try to extract chromosome name from rsid fields assuming CHR:POS... or CHR_POS... format.
+            chrom = "".join(itertools.takewhile(lambda x: x != ':' and x != '_', fields[rsid_idx])).lstrip('0')
+
+         position = long(fields[position_idx])
+         if reference.chrom != chrom or reference.start > position or position > reference.end:
+            reference = load_reference_region(reference_vcf, chrom, position, position + 1000000)
+
+         reference_alleles = reference.variants.get(position, None)
+         if reference_alleles is None:
+            summary['not_in_panel'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         noncoded_allele = fields[alleleA_idx]
+         coded_allele = fields[alleleB_idx]
+         ref_allele = None
+         alt_allele = None
+         for alleles in reference_alleles:
+            if noncoded_allele == alleles.ref and coded_allele in alleles.alt:
+               ref_allele = noncoded_allele
+               alt_allele = coded_allele
+               break
+            elif noncoded_allele in alleles.alt and coded_allele == alleles.ref:
+               ref_allele = coded_allele
+               alt_allele = noncoded_allele
+               break
+         if ref_allele is None or alt_allele is None:
+            summary['allele_mismatch'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         if impq:
+            info_str = impq.get(chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele, 'NA')
+         else:
+            info_str = fields[info_idx]
+
+         if info_str == 'NA':
+            summary['info_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         info = float(info_str)
+         if info < min_info:
+            summary['info_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+
+         total = float(fields[all_AA_idx]) + float(fields[all_AB_idx]) + float(fields[all_BB_idx])
+         cases = float(fields[cases_AA_idx]) + float(fields[cases_AB_idx]) + float(fields[cases_BB_idx])
+         controls = float(fields[controls_AA_idx]) + float(fields[controls_AB_idx]) + float(fields[controls_BB_idx])
+         maf = float(fields[maf_idx])
+         mac = 2.0 * total * maf
+         if mac < min_mac:
+            summary['mac_lt_min'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         af = (float(fields[all_AB_idx]) + 2.0 * float(fields[all_BB_idx])) / (2.0 * total)
+
+         if fields[pvalue_idx] == 'NA':
+            summary['pvalue_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            pvalue = float(fields[pvalue_idx])
+            if pvalue <= 0.0:
+               summary['pvalue_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif pvalue >= 1.0:
+               summary['pvalue_ge_one'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         if fields[se_idx] == 'NA':
+            summary['se_is_na'] += 1
+            summary['n_removed_variants'] += 1
+            continue
+         else:
+            se = float(fields[se_idx])
+            if se <= 0:
+               summary['se_le_zero'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+            elif se > max_se:
+               summary['se_gt_max'] += 1
+               summary['n_removed_variants'] += 1
+               continue
+
+         summary['n_remained_variants'] += 1
+
+         ofile.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%g\t%g\t%g\t%g\t%s\t%s\t%s\t%s\t%s\n' % (
+            chrom + ':' + fields[position_idx] + ':' + ref_allele + ':' + alt_allele,
+            chrom,
+            fields[position_idx],
+            ref_allele,
+            alt_allele,
+            coded_allele,
+            noncoded_allele,
+            total,
+            cases,
+            controls,
+            af,
+            fields[maf_idx],
+            fields[effect_idx],
+            fields[se_idx],
+            fields[pvalue_idx],
+            info_str
+          ))
+
+      return summary
+
+
+
+
+if __name__ == '__main__':
+   args = argparser.parse_args()
+   if args.invoked_command == 'epacts':
+      if args.test == 'firth':
+         summary = harmonize_firth(args.in_file, args.reference_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+      elif args.test == 'emmax':
+         summary = harmonize_emmax(args.in_file, args.reference_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+      sys.stdout.write('#tool=%s\n' % args.invoked_command)
+      sys.stdout.write('#test=%s\n' % args.test)
+   elif args.invoked_command == 'snptest':
+      if args.test == 'frequentist1':
+         summary = harmonize_frequentist1(args.in_file, args.reference_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+      sys.stdout.write('#tool=%s\n' % args.invoked_command)
+      sys.stdout.write('#test=%s\n' % args.test)
+   elif args.invoked_command == 'quicktest':
+      summary = harmonize_quicktest(args.in_file, args.reference_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+      sys.stdout.write('#tool=%s\n' % args.invoked_command)
+
+   sys.stdout.write('#file=%s\n' % args.in_file)
+   sys.stdout.write('#imputation_quality=%s\n' % args.imputation_file)
+   sys.stdout.write('#panel=%s\n' % args.reference_vcf)
+   sys.stdout.write('#min_info=%g\n' % args.min_info)
+   sys.stdout.write('#min_mac=%d\n' % args.min_mac)
+   sys.stdout.write('#max_se=%g\n' % args.max_se)
+   for label, counter in summary.iteritems():
+      sys.stdout.write('%s\t%d\n' % (label, counter))
+
