@@ -1,0 +1,70 @@
+import sys
+import argparse
+import EPACTS
+import SNPTEST
+import QuickTest
+
+
+argparser = argparse.ArgumentParser('Tool for harmonizing EPACTS, SNPTEST and other formats.')
+sub_argparser = argparser.add_subparsers(title = 'supported commands', description = '', help = '', dest = 'invoked_command')
+
+
+epacts_argparser = sub_argparser.add_parser('epacts', help = 'Harmonizes EPACTS (Firth, EMMAX) file format.')
+epacts_argparser.add_argument('--test', metavar = 'name', dest = 'test', required = True, choices = EPACTS.headers.keys(), help = 'Used statistical test: ' + ', '.join(EPACTS.headers.keys()) + '.')
+epacts_argparser.add_argument('--ref', metavar = 'file', dest = 'panel_vcf', required = True, help = 'Imputation panel VCF (only first 8 fields are required) indexed using tabix.')
+epacts_argparser.add_argument('--impq', metavar = 'file', dest = 'imputation_file', required = True, help = 'File with imputation qualities. Supported formats are VCF (from minimac) and SNPSTAT. Compressed with gzip/bgzip.')
+epacts_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = 'Minimal imputation quality.')
+epacts_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = 'Minimal minor allele count.')
+epacts_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = 'Minimal standard error of the effect.')
+epacts_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.')
+epacts_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file. Output is compressed using gzip.')
+
+
+snptest_argparser = sub_argparser.add_parser('snptest', help = 'Harmonizes SNPTEST file format.')
+snptest_argparser.add_argument('--test', metavar = 'name', dest = 'test', required = True, choices = SNPTEST.headers.keys(), help = 'Used statistical test: ' + ', '.join(SNPTEST.headers.keys()) + '.')
+snptest_argparser.add_argument('--ref', metavar = 'file', dest = 'panel_vcf', required = True, help = 'Imputation panel VCF (only first 8 fields are required) indexed using tabix.')
+snptest_argparser.add_argument('--impq', metavar = 'file', dest = 'imputation_file', required = False, help = 'File with imputation qualities. Supported formats are VCF (from minimac) and SNPSTAT. Compressed with gzip/bgzip.')
+snptest_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = 'Minimal imputation quality.')
+snptest_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = 'Minimal minor allele count.')
+snptest_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = 'Minimal standard error of the effect.')
+snptest_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.')
+snptest_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file. Output is compressed using gzip.')
+
+
+quicktest_argparser = sub_argparser.add_parser('quicktest', help = 'Harmonizes QuickTest file format.')
+quicktest_argparser.add_argument('--ref', metavar = 'file', dest = 'panel_vcf', required = True, help = 'Imputation panel VCF (only first 8 fields are required) indexed using tabix.')
+quicktest_argparser.add_argument('--impq', metavar = 'file', dest = 'imputation_file', required = False, help = 'File with imputation qualities. Supported formats are VCF (from minimac) and SNPSTAT. Compressed with gzip/bgzip.')
+quicktest_argparser.add_argument('--min-impq', metavar = 'float', dest = 'min_info', required = True, type = float, help = 'Minimal imputation quality.')
+quicktest_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = 'Minimal minor allele count.')
+quicktest_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = 'Minimal standard error of the effect.')
+quicktest_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.')
+quicktest_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file. Output is compressed using gzip.')
+
+
+if __name__ == '__main__':
+   args = argparser.parse_args()
+
+   sys.stdout.write('#tool=%s\n' % args.invoked_command)
+   sys.stdout.write('#test=%s\n' % (args.test if 'test' in args else None))
+   sys.stdout.write('#input_file=%s\n' % args.in_file)
+   sys.stdout.write('#output_file=%s\n' % args.out_file)
+   sys.stdout.write('#imputation_quality=%s\n' % args.imputation_file)
+   sys.stdout.write('#panel=%s\n' % args.panel_vcf)
+   sys.stdout.write('#min_info=%g\n' % args.min_info)
+   sys.stdout.write('#min_mac=%d\n' % args.min_mac)
+   sys.stdout.write('#max_se=%g\n' % args.max_se)
+
+   if args.invoked_command == 'epacts':
+      if args.test == 'firth':
+         counters = EPACTS.harmonize_firth(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+      elif args.test == 'emmax':
+         counters = EPACTS.harmonize_emmax(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+   elif args.invoked_command == 'snptest':
+      if args.test == 'frequentist1':
+         counters = SNPTEST.harmonize_frequentist1(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+   elif args.invoked_command == 'quicktest':
+      counters = QuickTest.harmonize_default(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+
+   for counter, value in counters.iteritems():
+      sys.stdout.write('%s\t%d\n' % (counter, value))
+
