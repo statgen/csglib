@@ -3,6 +3,7 @@ import argparse
 import EPACTS
 import SNPTEST
 import QuickTest
+import Custom
 
 
 argparser = argparse.ArgumentParser('Tool for harmonizing EPACTS, SNPTEST and other formats.')
@@ -41,16 +42,39 @@ quicktest_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', req
 quicktest_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file. Output is compressed using gzip.')
 
 
+custom_argparser = sub_argparser.add_parser('custom', help = 'Harmonized custom file format.')
+custom_argparser.add_argument('--ref', metavar = 'file', dest = 'panel_vcf', required = True, help = 'Imputation panel VCF (only first 8 fields are required) indexed using tabix.')
+custom_argparser.add_argument('--sep', metavar = 'separator', dest = 'sep', required = False, default = 'tab', choices = ['tab', 'whitespace', 'comma', 'semicolon'], help = 'Field separator: whitespace, tab, comma, semicolon. Deafault is tab.')
+custom_argparser.add_argument('--comment', metavar = 'comment symbold', dest = 'comment', required = False, help = 'Comment symbol (e.g. #). By default, no comments are allowed.')
+custom_argparser.add_argument('--chrom-field', metavar = 'name', dest = 'chrom_field', required = True, help = 'Chromosome field name.')
+custom_argparser.add_argument('--pos-field', metavar = 'name', dest = 'pos_field', required = True, help = 'Chromosomal position field name.')
+custom_argparser.add_argument('--ca-field', metavar = 'name', dest = 'coded_allele_field', required = True, help = 'Coded allele field name.')
+custom_argparser.add_argument('--oa-field', metavar = 'name', dest = 'noncoded_allele_field', required = True, help = 'Noncoded allele field name.')
+custom_argparser.add_argument('--caf-field', metavar = 'name' , dest = 'coded_allele_freq_field', required = True, help = 'Coded allele frequency field name.')
+custom_argparser.add_argument('--effect-field', metavar = 'name', dest = 'effect_field', required = True, help = 'Effect field name.')
+custom_argparser.add_argument('--se-field', metavar = 'name', dest = 'se_field', required = True, help = 'Standard error of the effect field name.')
+custom_argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field', required = True, help = 'P-value field name.')
+custom_argparser.add_argument('--min-mac', metavar = 'number', dest = 'min_mac', required = True, type = int, help = 'Minimal minor allele count.')
+custom_argparser.add_argument('--max-se', metavar = 'float', dest = 'max_se', required = True, type = float, help = 'Minimal standard error of the effect.')
+custom_argparser.add_argument('--cases', metavar = 'number', dest = 'cases', required = True, type = int, help = 'Number of cases.')
+custom_argparser.add_argument('--controls', metavar = 'number', dest = 'controls', required = True, type = int, help = 'Number of controls.')
+custom_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.')
+custom_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file. Output is compressed using gzip.')
+
+
 if __name__ == '__main__':
    args = argparser.parse_args()
 
    sys.stdout.write('#tool=%s\n' % args.invoked_command)
-   sys.stdout.write('#test=%s\n' % (args.test if 'test' in args else None))
+   if 'test' in args:
+      sys.stdout.write('#test=%s\n' % args.test)
    sys.stdout.write('#input_file=%s\n' % args.in_file)
    sys.stdout.write('#output_file=%s\n' % args.out_file)
-   sys.stdout.write('#imputation_quality=%s\n' % args.imputation_file)
+   if 'imputation_file' in args:
+      sys.stdout.write('#imputation_quality=%s\n' % args.imputation_file)
    sys.stdout.write('#panel=%s\n' % args.panel_vcf)
-   sys.stdout.write('#min_info=%g\n' % args.min_info)
+   if 'min_info' in args:
+      sys.stdout.write('#min_info=%g\n' % args.min_info)
    sys.stdout.write('#min_mac=%d\n' % args.min_mac)
    sys.stdout.write('#max_se=%g\n' % args.max_se)
 
@@ -64,6 +88,12 @@ if __name__ == '__main__':
          counters = SNPTEST.harmonize_frequentist1(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
    elif args.invoked_command == 'quicktest':
       counters = QuickTest.harmonize_default(args.in_file, args.panel_vcf, args.imputation_file, args.min_info, args.min_mac, args.max_se, args.out_file)
+   elif args.invoked_command == 'custom':
+      counters = Custom.harmonize(args.in_file, 
+              args.sep, args.comment, 
+              args.chrom_field, args.pos_field, args.coded_allele_field, args.noncoded_allele_field, 
+              args.coded_allele_freq_field, args.effect_field, args.se_field, args.pvalue_field, 
+              args.cases, args.controls, args.min_mac, args.max_se, args.panel_vcf, args.out_file)
 
    for counter, value in counters.iteritems():
       sys.stdout.write('%s\t%d\n' % (counter, value))
