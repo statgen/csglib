@@ -46,7 +46,16 @@ setup(
     'cython',
     'numpy',
   ],
-  scripts = ['csg/gwas/Filter', 'csg/gwas/AnnotateRs', 'csg/gwas/SignificantLoci', 'csg/gwas/GCcorrect', 'csg/gwas/IndependentHits', 'csg/gwas/InflationFromFile', 'csg/pedigree/trios/TrioPuller'],
+  scripts = [
+      'csg/gwas/Harmonize/Harmonize',
+      'csg/gwas/Filter',
+      'csg/gwas/AnnotateRs',
+      'csg/gwas/SignificantLoci',
+      'csg/gwas/GCcorrect',
+      'csg/gwas/IndependentHits',
+      'csg/gwas/InflationFromFile',
+      'csg/pedigree/trios/TrioPuller'
+  ],
 )
 
 

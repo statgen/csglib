@@ -1,9 +1,6 @@
 import sys
 import argparse
-import EPACTS
-import SNPTEST
-import QuickTest
-import Custom
+from csg.gwas.Harmonize import EPACTS, SNPTEST, QuickTest, Custom
 
 
 argparser = argparse.ArgumentParser('Tool for harmonizing EPACTS, SNPTEST and other formats.')
