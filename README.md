@@ -6,6 +6,13 @@ An easy way to install this while developing is:
 pip install --user -e .
 ```
 
+Updating documentation at gh-pages:
+
+```
+git checkout gh-pages
+git merge --no-ff -s recursive -X subtree=docs/build/ master
+```
+
 # Structure
 
 ### csg / intervaltree /
