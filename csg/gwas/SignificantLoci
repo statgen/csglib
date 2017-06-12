@@ -10,6 +10,7 @@ argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field'
 argparser.add_argument('--sep', metavar = 'name', dest = 'sep', required = True, choices = ['comma', 'semicolon', 'tab', 'whitespace'], help = 'Fields separator. Supported values: comma, semicolon, tab, whitespace.')
 argparser.add_argument('--min-locus-size', metavar = 'bp', dest = 'min_locus_size', required = True, type = long, help = 'Minimal locus size. Measured in base-pairs as lead (i.e. most signifcant association) variant +/- 0.5 * min-locus_size.')
 argparser.add_argument('--max-pvalue', metavar = 'float', dest = 'max_pvalue', required = True, type = float, help = 'P-value significance threshold.')
+argparser.add_argument('--merge', action='store_true', help = 'If specified, then merge overlapping loci.')
 argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output file name. LocusStart and LocusEnd are appended to the original fields.')
 
 
@@ -64,14 +65,15 @@ def load_signficant_associations(assoc_file, id_field, pvalue_field, sep, max_pv
       for line in ifile:
          fields = line.rstrip().split(sep_char)
          pvalue = float(fields[pvalue_field_idx])
+         if pvalue >= max_pvalue:
+            continue
          marker = fields[id_field_idx].split(':')
-         chrom = marker[0]
+         chrom = marker[0]        
          position = long(marker[1])
-         if pvalue < max_pvalue:
-            yield (chrom, position, pvalue, fields)
+         yield (chrom, position, pvalue, fields)
 
 
-def extract_loci(significant_associations, min_locus_size):
+def extract_loci(significant_associations, merge, min_locus_size):
    associations_by_chrom = dict()
    for variant in significant_associations:
       chrom = variant[0]
@@ -85,8 +87,11 @@ def extract_loci(significant_associations, min_locus_size):
       for variant in variants:
          if not any(intervals.point_intersect(variant[1])):
             intervals.add(variant[1] - long(min_locus_size / 2.0), variant[1] + long(min_locus_size / 2.0), variant)
-      merged_intervals = intervals.merge()
-      for interval in merged_intervals.ascending():
+    
+      if merge:
+         intervals = intervals.merge()
+    
+      for interval in intervals.ascending():
          min_pvalue = sys.float_info.max
          min_pvalue_variant = None
          for variant in interval.values:
@@ -123,5 +128,5 @@ def write_loci(loci, assoc_file, sep, out_file):
 
 if __name__ == '__main__':
    args = argparser.parse_args()
-   loci = (extract_loci(load_signficant_associations(args.assoc_file, args.id_field, args.pvalue_field, args.sep, args.max_pvalue), args.min_locus_size))
+   loci = (extract_loci(load_signficant_associations(args.assoc_file, args.id_field, args.pvalue_field, args.sep, args.max_pvalue), args.merge, args.min_locus_size))
    write_loci(loci, args.assoc_file, args.sep, args.out_file)
