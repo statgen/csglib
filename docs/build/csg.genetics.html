@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>csg.genetics package &#8212; csglib 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="csg-genetics-package">
+<h1>csg.genetics package<a class="headerlink" href="#csg-genetics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="csg.genetics.ld.html">csg.genetics.ld package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="csg.genetics.ld.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.genetics.ld.html#module-csg.genetics.ld.pyld">csg.genetics.ld.pyld module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.genetics.ld.html#module-csg.genetics.ld.pyld_example">csg.genetics.ld.pyld_example module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.genetics.ld.html#csg-genetics-ld-pyld-example-config-module">csg.genetics.ld.pyld_example_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.genetics.ld.html#module-csg.genetics.ld">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-csg.genetics.alleles">
+<span id="csg-genetics-alleles-module"></span><h2>csg.genetics.alleles module<a class="headerlink" href="#module-csg.genetics.alleles" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csg.genetics.alleles.flip_effects">
+<code class="descclassname">csg.genetics.alleles.</code><code class="descname">flip_effects</code><span class="sig-paren">(</span><em>a1</em>, <em>a2</em>, <em>o1</em>, <em>o2</em>, <em>effect</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.alleles.flip_effects" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function flips effect sizes (effect) specified relative to a given set of alleles (o1, o2) towards
+a target set of alleles (a1, a2). We assume the effects are relative to o1.</p>
+<dl class="docutils">
+<dt>Args: </dt>
+<dd>a1 (Series or ndarray): Allele 1 
+a2 (Series or ndarray): Allele 2
+o1 (Series or ndarray): Other allele 1 
+o2 (Series or ndarray): Other allele 2 
+effect (Series[float] or ndarray[float]): Effect sizes</dd>
+<dt>Returns:</dt>
+<dd><p class="first">Nothing, arrays are modified in place (o1,o2,effect are modified)</p>
+<p class="last">If alleles cannot be matched at all, the effect will be nan’d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="csg.genetics.alleles.flip_strand">
+<code class="descclassname">csg.genetics.alleles.</code><code class="descname">flip_strand</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.alleles.flip_strand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="csg-genetics-cyalleles-module">
+<h2>csg.genetics.cyalleles module<a class="headerlink" href="#csg-genetics-cyalleles-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-csg.genetics.hwe">
+<span id="csg-genetics-hwe-module"></span><h2>csg.genetics.hwe module<a class="headerlink" href="#module-csg.genetics.hwe" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csg.genetics.hwe.hwe_exact_test">
+<code class="descclassname">csg.genetics.hwe.</code><code class="descname">hwe_exact_test</code><span class="sig-paren">(</span><em>obs_hets</em>, <em>obs_hom1</em>, <em>obs_hom2</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.hwe.hwe_exact_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exact test for HWE.</p>
+<p><a class="reference external" href="http://www.pypedia.com/index.php/Hardy_Weinberg_Equilibrium_exact_test">http://www.pypedia.com/index.php/Hardy_Weinberg_Equilibrium_exact_test</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-csg.genetics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-csg.genetics" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">csg.genetics package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-csg.genetics.alleles">csg.genetics.alleles module</a></li>
+<li><a class="reference internal" href="#csg-genetics-cyalleles-module">csg.genetics.cyalleles module</a></li>
+<li><a class="reference internal" href="#module-csg.genetics.hwe">csg.genetics.hwe module</a></li>
+<li><a class="reference internal" href="#module-csg.genetics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/csg.genetics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Ryan Welch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/csg.genetics.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

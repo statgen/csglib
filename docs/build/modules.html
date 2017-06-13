@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>csg &#8212; csglib 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="csg">
+<h1>csg<a class="headerlink" href="#csg" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="csg.html">csg package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="csg.genetics.html">csg.genetics package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#module-csg.genetics.alleles">csg.genetics.alleles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#csg-genetics-cyalleles-module">csg.genetics.cyalleles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#module-csg.genetics.hwe">csg.genetics.hwe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genetics.html#module-csg.genetics">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.genome.html">csg.genome package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.genome.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genome.html#module-csg.genome.coordinates">csg.genome.coordinates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genome.html#csg-genome-intervals-module">csg.genome.intervals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.genome.html#module-csg.genome">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.gwas.html">csg.gwas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#module-csg.gwas.gwas_catalog">csg.gwas.gwas_catalog module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#module-csg.gwas.independent">csg.gwas.independent module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#module-csg.gwas.inflation">csg.gwas.inflation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.gwas.html#module-csg.gwas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.intervaltree.html">csg.intervaltree package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.intervaltree.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.intervaltree.html#module-csg.intervaltree.IntervalTree">csg.intervaltree.IntervalTree module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.intervaltree.html#module-csg.intervaltree">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.notify.html">csg.notify package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.notify.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.notify.html#csg-notify-pushbullet-module">csg.notify.pushbullet module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.notify.html#module-csg.notify">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.pandas.html">csg.pandas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.pandas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.pandas.html#csg-pandas-hdf-module">csg.pandas.hdf module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.pandas.html#module-csg.pandas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.pedigree.html">csg.pedigree package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.pedigree.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.pedigree.html#module-csg.pedigree">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.plotting.html">csg.plotting package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.plotting.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.plotting.html#module-csg.plotting.matplotext">csg.plotting.matplotext module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.plotting.html#module-csg.plotting.qqplot">csg.plotting.qqplot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.plotting.html#module-csg.plotting.util">csg.plotting.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.plotting.html#module-csg.plotting">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="csg.statistics.html">csg.statistics package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="csg.statistics.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.statistics.html#module-csg.statistics.FDR">csg.statistics.FDR module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.statistics.html#csg-statistics-invnorm-module">csg.statistics.invnorm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="csg.statistics.html#module-csg.statistics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#csg-iterhelp-module">csg.iterhelp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#module-csg.jupyter">csg.jupyter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#csg-math-module">csg.math module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#module-csg.patsy">csg.patsy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#module-csg.util">csg.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#module-csg.yaml">csg.yaml module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csg.html#module-csg">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modules.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Ryan Welch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
