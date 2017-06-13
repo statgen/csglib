@@ -62,7 +62,16 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.ascending">
 <code class="descname">ascending</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.ascending" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over all intervals in ascending order (i.e. from the leftmost to rightmost interval).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – interval.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.complementary">
@@ -72,7 +81,16 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.descending">
 <code class="descname">descending</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.descending" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over all intervals in descending order (i.e. from the rightmost to the leftmost interval).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – interval.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.get_height">
@@ -133,7 +151,20 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.merge">
 <code class="descname">merge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.merge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns new interval tree with no overlapping intervals.</p>
+<p>Overlapping intervals are merged into a new single interval.
+The value of the new interval is the list of all values from the merged overlapping intervals.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new interval tree.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#csg.intervaltree.IntervalTree.IntervalTree" title="csg.intervaltree.IntervalTree.IntervalTree">IntervalTree</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.nearest_left">
@@ -155,7 +186,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – chromosomal position.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNonde</em> – intersecting interval.</td>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – intersecting interval.</td>
 </tr>
 </tbody>
 </table>
@@ -166,7 +197,9 @@
 <dl class="class">
 <dt id="csg.intervaltree.IntervalTree.IntervalTreeNode">
 <em class="property">class </em><code class="descclassname">csg.intervaltree.IntervalTree.</code><code class="descname">IntervalTreeNode</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>max_end</em>, <em>value</em>, <em>deviation</em>, <em>color</em>, <em>left</em>, <em>right</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>This class represents an interval in the interval tree.</p>
+<p>Every interval has start and end positions, and (optional) associated value of any type.</p>
+<dl class="attribute">
 <dt id="csg.intervaltree.IntervalTree.IntervalTreeNode.BLACK">
 <code class="descname">BLACK</code><em class="property"> = 0</em><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode.BLACK" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>

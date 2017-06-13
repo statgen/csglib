@@ -5,6 +5,12 @@
 """
 
 class IntervalTreeNode:
+   """This class represents an interval in the interval tree.
+
+   Every interval has start and end positions, and (optional) associated value of any type.
+
+   """
+
    BLACK = 0
    RED = 1
 
@@ -212,7 +218,7 @@ class IntervalTree:
          position (long): chromosomal position.
 
       Yields:
-         IntervalTreeNonde: intersecting interval.
+         IntervalTreeNode: intersecting interval.
 
       """
       if self.root is not None:
@@ -312,6 +318,12 @@ class IntervalTree:
             break
 
    def ascending(self):
+      """Iterates over all intervals in ascending order (i.e. from the leftmost to rightmost interval).
+
+      Yields:
+         IntervalTreeNode: interval.
+
+      """
       nodes = []
       node = self.root
       while True:
@@ -355,6 +367,13 @@ class IntervalTree:
             break
 
    def descending(self):
+      """Iterates over all intervals in descending order (i.e. from the rightmost to the leftmost interval).
+
+      Yields:
+         IntervalTreeNode: interval.
+
+      """
+
       nodes = []
       node = self.root
       while True:
@@ -421,6 +440,15 @@ class IntervalTree:
 
 
    def merge(self):
+      """Returns new interval tree with no overlapping intervals.
+
+      Overlapping intervals are merged into a new single interval.
+      The value of the new interval is the list of all values from the merged overlapping intervals.
+
+      Returns:
+         IntervalTree: new interval tree.
+
+      """
       new_tree = IntervalTree()
       ascending = self.ascending()
       merged_start = None
