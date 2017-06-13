@@ -1,5 +1,8 @@
 """A tree structure for efficient interval-based queries.
 
+This module implements the interval tree datastucture for time effecient (log-complexity) querying of interval-based data.
+The implementation is based on red-black binary tree.
+
 .. moduleauthor:: Daniel Taliun <dtaliun@umich.edu>
 
 """
@@ -8,6 +11,11 @@ class IntervalTreeNode:
    """This class represents an interval in the interval tree.
 
    Every interval has start and end positions, and (optional) associated value of any type.
+
+   Attributes:
+      start (long): start position.
+      end (long): end position.
+      values (list): list of associated values (of any type).
 
    """
 
@@ -92,12 +100,22 @@ class IntervalTreeNode:
 class IntervalTree:
    """This class implements the interval tree based on red-black binary tree.
    """
-
    def __init__(self):
       self.root = None
 
 
    def add(self, start, end, value = None):
+      """Adds interval to the interval tree.
+
+      Note:
+         No check if start < end is done.
+
+      Args:
+         start (long): interval's start position.
+         end (long): interval's end position.
+         value: (optional) associated value of any type.
+
+      """
       self.__add(start, end, value, 0)
 
 
@@ -215,7 +233,7 @@ class IntervalTree:
       """Finds all intervals that intersect the specified chromosomal position.
 
       Args:
-         position (long): chromosomal position.
+         position (long): point position.
 
       Yields:
          IntervalTreeNode: intersecting interval.
@@ -236,8 +254,8 @@ class IntervalTree:
       """Finds all intervals that overlap specified interval.
 
       Args:
-         start (long): start chromosomal position of the interval.
-         end (long): end chromosomal position of the interval.
+         start (long): start position of the interval.
+         end (long): end position of the interval.
 
       Yields:
          IntervalTreeNode: overlapping interval.
@@ -256,6 +274,17 @@ class IntervalTree:
 
 
    def nearest_left(self, position):
+      """Find the closest interval to the left from the specified position.
+
+      The distance to the closest interval is measured with respect to its start position.
+
+      Args:
+         position (long): point position.
+
+      Returns:
+         IntervalTreeNode: interval.
+
+      """
       if self.root is None:
          return None
       nodes = [self.root]
@@ -272,6 +301,17 @@ class IntervalTree:
 
 
    def nearest_right(self, position):
+      """Find the closest interval to the right from the specified position.
+
+      The distance to the closest interval is measured with respect to its start position.
+
+      Args:
+         position (long): point position.
+
+      Returns:
+         IntervalTree: interval.
+
+      """
       if self.root is None:
          return None
       nodes = [self.root]
@@ -288,6 +328,15 @@ class IntervalTree:
 
 
    def k_first(self, k):
+      """Iterates over K leftmost intervals.
+
+      Args:
+         k (int): maximal number of leftmost intervals.
+
+      Yields:
+         IntervalTreeNode: interval.
+
+      """
       nodes = []
       node = self.root
       while k > 0:
@@ -338,6 +387,15 @@ class IntervalTree:
             break
 
    def k_last(self, k):
+      """Iterates over K rightmost intervals.
+
+      Args:
+         k (int): maximal number of rightmost intervals.
+
+      Yields:
+         IntervalTreeNode: interval.
+
+      """
       nodes = []
       node = self.root
       while k > 0:
@@ -373,7 +431,6 @@ class IntervalTree:
          IntervalTreeNode: interval.
 
       """
-
       nodes = []
       node = self.root
       while True:
@@ -388,6 +445,18 @@ class IntervalTree:
             break
 
    def k_nearest_left(self, position, k):
+      """Iterates over K closest interval to the left from the specified position.
+
+      The distance to the closest interval is measured with respect to its start position.
+
+      Args:
+         position (long): point position.
+         k (int): maximal number of closest intervals.
+
+      Yields:
+         IntervalTreeNode: interval.
+
+      """
       node = self.nearest_left(position)
       if node is None:
          return
@@ -414,6 +483,17 @@ class IntervalTree:
 
 
    def k_nearest_right(self, position, k):
+      """Iterates over K closest interval to the right from the specified position.
+
+      The distance to the closest interval is measured with respect to its start position.
+
+      Args:
+         position (long): point position.
+         k (int): maximal number of closest intervals.
+
+      Yields:
+         IntervalTreeNode: interval.
+      """
       node = self.nearest_right(position)
       if node is None:
          return
@@ -483,6 +563,15 @@ class IntervalTree:
 
 
    def complementary(self):
+      """Returns new interval tree constructed from the current interval tree by turning gaps that are not covered by any interval into intervals in the new tree.
+
+      Note:
+         Intervals in the new interval tree do not store any values.
+
+      Returns:
+         IntervalTree: new interval tree.
+
+      """
       new_tree = IntervalTree()
       start = None
       for x in self.ascending():
@@ -493,15 +582,18 @@ class IntervalTree:
 
 
    def get_values_count(self):
+      """int: Total number of stored values within intervals in the interval tree."""
       return 0 if self.root is None else self.root.get_values_count()
    __len__ = get_values_count
 
 
    def get_intervals_count(self):
+      """int: Total number of intervals in the interval tree."""
       return 0 if self.root is None else self.root.get_intervals_count()
 
 
    def get_height(self):
+      """int: Number of levels in the interval tree based on the longest branch."""
       return 0 if self.root is None else self.root.get_height()
 
 
