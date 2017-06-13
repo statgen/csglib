@@ -50,6 +50,8 @@
 <div class="section" id="module-csg.intervaltree.IntervalTree">
 <span id="csg-intervaltree-intervaltree-module"></span><h2>csg.intervaltree.IntervalTree module<a class="headerlink" href="#module-csg.intervaltree.IntervalTree" title="Permalink to this headline">¶</a></h2>
 <p>A tree structure for efficient interval-based queries.</p>
+<p>This module implements the interval tree datastucture for time effecient (log-complexity) querying of interval-based data.
+The implementation is based on red-black binary tree.</p>
 <dl class="class">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree">
 <em class="property">class </em><code class="descclassname">csg.intervaltree.IntervalTree.</code><code class="descname">IntervalTree</code><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree" title="Permalink to this definition">¶</a></dt>
@@ -57,7 +59,25 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.add">
 <code class="descname">add</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.add" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds interval to the interval tree.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No check if start &lt; end is done.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – interval’s start position.</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – interval’s end position.</li>
+<li><strong>value</strong> – (optional) associated value of any type.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.ascending">
@@ -76,7 +96,22 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.complementary">
 <code class="descname">complementary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.complementary" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns new interval tree constructed from the current interval tree by turning gaps that are not covered by any interval into intervals in the new tree.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Intervals in the new interval tree do not store any values.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new interval tree.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#csg.intervaltree.IntervalTree.IntervalTree" title="csg.intervaltree.IntervalTree.IntervalTree">IntervalTree</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.descending">
@@ -95,17 +130,20 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.get_height">
 <code class="descname">get_height</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.get_height" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>int: Number of levels in the interval tree based on the longest branch.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.get_intervals_count">
 <code class="descname">get_intervals_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.get_intervals_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>int: Total number of intervals in the interval tree.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.get_values_count">
 <code class="descname">get_values_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.get_values_count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>int: Total number of stored values within intervals in the interval tree.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.interval_overlap">
@@ -116,8 +154,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – start chromosomal position of the interval.</li>
-<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – end chromosomal position of the interval.</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – start position of the interval.</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – end position of the interval.</li>
 </ul>
 </td>
 </tr>
@@ -131,22 +169,78 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.k_first">
 <code class="descname">k_first</code><span class="sig-paren">(</span><em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.k_first" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over K leftmost intervals.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – maximal number of leftmost intervals.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – interval.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.k_last">
 <code class="descname">k_last</code><span class="sig-paren">(</span><em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.k_last" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over K rightmost intervals.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – maximal number of rightmost intervals.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – interval.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.k_nearest_left">
 <code class="descname">k_nearest_left</code><span class="sig-paren">(</span><em>position</em>, <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.k_nearest_left" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over K closest interval to the left from the specified position.</p>
+<p>The distance to the closest interval is measured with respect to its start position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – point position.</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – maximal number of closest intervals.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>IntervalTreeNode</em> – interval.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.k_nearest_right">
 <code class="descname">k_nearest_right</code><span class="sig-paren">(</span><em>position</em>, <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.k_nearest_right" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterates over K closest interval to the right from the specified position.</p>
+<p>The distance to the closest interval is measured with respect to its start position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – point position.</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – maximal number of closest intervals.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>IntervalTreeNode</em> – interval.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.merge">
@@ -169,12 +263,40 @@ The value of the new interval is the list of all values from the merged overlapp
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.nearest_left">
 <code class="descname">nearest_left</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.nearest_left" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Find the closest interval to the left from the specified position.</p>
+<p>The distance to the closest interval is measured with respect to its start position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – point position.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">interval.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#csg.intervaltree.IntervalTree.IntervalTreeNode" title="csg.intervaltree.IntervalTree.IntervalTreeNode">IntervalTreeNode</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.nearest_right">
 <code class="descname">nearest_right</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.nearest_right" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Find the closest interval to the right from the specified position.</p>
+<p>The distance to the closest interval is measured with respect to its start position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – point position.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">interval.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#csg.intervaltree.IntervalTree.IntervalTree" title="csg.intervaltree.IntervalTree.IntervalTree">IntervalTree</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.point_intersect">
@@ -184,7 +306,7 @@ The value of the new interval is the list of all values from the merged overlapp
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – chromosomal position.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – point position.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNode</em> – intersecting interval.</td>
 </tr>
@@ -199,6 +321,24 @@ The value of the new interval is the list of all values from the merged overlapp
 <em class="property">class </em><code class="descclassname">csg.intervaltree.IntervalTree.</code><code class="descname">IntervalTreeNode</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>max_end</em>, <em>value</em>, <em>deviation</em>, <em>color</em>, <em>left</em>, <em>right</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class represents an interval in the interval tree.</p>
 <p>Every interval has start and end positions, and (optional) associated value of any type.</p>
+<dl class="attribute">
+<dt id="csg.intervaltree.IntervalTree.IntervalTreeNode.start">
+<code class="descname">start</code><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode.start" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>long</em> – start position.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.intervaltree.IntervalTree.IntervalTreeNode.end">
+<code class="descname">end</code><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode.end" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>long</em> – end position.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.intervaltree.IntervalTree.IntervalTreeNode.values">
+<code class="descname">values</code><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode.values" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – list of associated values (of any type).</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="csg.intervaltree.IntervalTree.IntervalTreeNode.BLACK">
 <code class="descname">BLACK</code><em class="property"> = 0</em><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTreeNode.BLACK" title="Permalink to this definition">¶</a></dt>
