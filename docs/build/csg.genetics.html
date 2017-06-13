@@ -69,18 +69,26 @@
 <code class="descclassname">csg.genetics.alleles.</code><code class="descname">flip_effects</code><span class="sig-paren">(</span><em>a1</em>, <em>a2</em>, <em>o1</em>, <em>o2</em>, <em>effect</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.alleles.flip_effects" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function flips effect sizes (effect) specified relative to a given set of alleles (o1, o2) towards
 a target set of alleles (a1, a2). We assume the effects are relative to o1.</p>
-<dl class="docutils">
-<dt>Args: </dt>
-<dd>a1 (Series or ndarray): Allele 1 
-a2 (Series or ndarray): Allele 2
-o1 (Series or ndarray): Other allele 1 
-o2 (Series or ndarray): Other allele 2 
-effect (Series[float] or ndarray[float]): Effect sizes</dd>
-<dt>Returns:</dt>
-<dd><p class="first">Nothing, arrays are modified in place (o1,o2,effect are modified)</p>
-<p class="last">If alleles cannot be matched at all, the effect will be nan’d</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a1</strong> (<em>Series</em><em> or </em><em>ndarray</em>) – Allele 1</li>
+<li><strong>a2</strong> (<em>Series</em><em> or </em><em>ndarray</em>) – Allele 2</li>
+<li><strong>o1</strong> (<em>Series</em><em> or </em><em>ndarray</em>) – Other allele 1</li>
+<li><strong>o2</strong> (<em>Series</em><em> or </em><em>ndarray</em>) – Other allele 2</li>
+<li><strong>effect</strong> (<em>Series</em><em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>] or </em><em>ndarray</em><em>[</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>]</em>) – Effect sizes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>Nothing, arrays are modified in place (o1,o2,effect are modified)</p>
+<p>If alleles cannot be matched at all, the effect will be nan’d</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
