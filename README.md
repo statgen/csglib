@@ -14,6 +14,7 @@ cd docs
 sphinx-apidoc -f -o source/ ../csg/
 sphinx-build -b html source/ build/
 cd ..
+git add docs/
 git commit -m "documentation updated"
 git push
 ```
