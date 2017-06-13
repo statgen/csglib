@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>csg.pedigree.trios package &#8212; csglib 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="csg-pedigree-trios-package">
+<h1>csg.pedigree.trios package<a class="headerlink" href="#csg-pedigree-trios-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-csg.pedigree.trios.trios">
+<span id="csg-pedigree-trios-trios-module"></span><h2>csg.pedigree.trios.trios module<a class="headerlink" href="#module-csg.pedigree.trios.trios" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="csg.pedigree.trios.trios.KinshipEntry">
+<em class="property">class </em><code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">KinshipEntry</code><span class="sig-paren">(</span><em>id1</em>, <em>id2</em>, <em>kinship</em>, <em>prob_ibd0</em>, <em>prop_ibs0</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.KinshipEntry.id1">
+<code class="descname">id1</code><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry.id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.KinshipEntry.id2">
+<code class="descname">id2</code><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry.id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.KinshipEntry.kinship">
+<code class="descname">kinship</code><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry.kinship" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.KinshipEntry.prob_ibd0">
+<code class="descname">prob_ibd0</code><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry.prob_ibd0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.KinshipEntry.prop_ibs0">
+<code class="descname">prop_ibs0</code><a class="headerlink" href="#csg.pedigree.trios.trios.KinshipEntry.prop_ibs0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="csg.pedigree.trios.trios.Relation">
+<em class="property">class </em><code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">Relation</code><span class="sig-paren">(</span><em>kinship</em>, <em>degree</em>, <em>prob_ibd0</em>, <em>prop_ibs0</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.Relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Relation.degree">
+<code class="descname">degree</code><a class="headerlink" href="#csg.pedigree.trios.trios.Relation.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Relation.kinship">
+<code class="descname">kinship</code><a class="headerlink" href="#csg.pedigree.trios.trios.Relation.kinship" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Relation.prob_ibd0">
+<code class="descname">prob_ibd0</code><a class="headerlink" href="#csg.pedigree.trios.trios.Relation.prob_ibd0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Relation.prop_ibs0">
+<code class="descname">prop_ibs0</code><a class="headerlink" href="#csg.pedigree.trios.trios.Relation.prop_ibs0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="csg.pedigree.trios.trios.SexEntry">
+<em class="property">class </em><code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">SexEntry</code><span class="sig-paren">(</span><em>id</em>, <em>sex</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.SexEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.SexEntry.id">
+<code class="descname">id</code><a class="headerlink" href="#csg.pedigree.trios.trios.SexEntry.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.SexEntry.sex">
+<code class="descname">sex</code><a class="headerlink" href="#csg.pedigree.trios.trios.SexEntry.sex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="csg.pedigree.trios.trios.Trio">
+<em class="property">class </em><code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">Trio</code><span class="sig-paren">(</span><em>individual</em>, <em>father</em>, <em>mother</em>, <em>sex</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.Trio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Trio.father">
+<code class="descname">father</code><a class="headerlink" href="#csg.pedigree.trios.trios.Trio.father" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Trio.individual">
+<code class="descname">individual</code><a class="headerlink" href="#csg.pedigree.trios.trios.Trio.individual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Trio.mother">
+<code class="descname">mother</code><a class="headerlink" href="#csg.pedigree.trios.trios.Trio.mother" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.pedigree.trios.trios.Trio.sex">
+<code class="descname">sex</code><a class="headerlink" href="#csg.pedigree.trios.trios.Trio.sex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.get_trios">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">get_trios</code><span class="sig-paren">(</span><em>kinship_entries</em>, <em>sex_entries</em>, <em>min_degree</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.get_trios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.king_reader">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">king_reader</code><span class="sig-paren">(</span><em>in_kinship_file</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.king_reader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.kinship2degree">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">kinship2degree</code><span class="sig-paren">(</span><em>kinship</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.kinship2degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns relation degree derived from genetic kinship value.</p>
+<p>degree: int or None</p>
+<dl class="docutils">
+<dt>Exception</dt>
+<dd>Raises exception if kinship value is greater than 2^-0.5.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.pcrelate_reader">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">pcrelate_reader</code><span class="sig-paren">(</span><em>in_kinship_file</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.pcrelate_reader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.sex_reader">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">sex_reader</code><span class="sig-paren">(</span><em>in_sex_file</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.sex_reader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="csg.pedigree.trios.trios.write_trios">
+<code class="descclassname">csg.pedigree.trios.trios.</code><code class="descname">write_trios</code><span class="sig-paren">(</span><em>trio_entries</em>, <em>out_file</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.pedigree.trios.trios.write_trios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-csg.pedigree.trios">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-csg.pedigree.trios" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">csg.pedigree.trios package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-csg.pedigree.trios.trios">csg.pedigree.trios.trios module</a></li>
+<li><a class="reference internal" href="#module-csg.pedigree.trios">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/csg.pedigree.trios.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Ryan Welch.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/csg.pedigree.trios.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
