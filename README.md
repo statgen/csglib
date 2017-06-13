@@ -8,9 +8,21 @@ pip install --user -e .
 
 Updating documentation at gh-pages:
 
+1. On master branch
+```
+cd docs
+sphinx-apidoc -f -o source/ ../csg/
+sphinx-build -b html source/ build/
+cd ..
+git commit -m "documentation updated"
+git push
+```
+2. Modify gh-pages branch
 ```
 git checkout gh-pages
 git merge --no-ff -s recursive -X subtree=docs/build/ master
+git push
+git checkout master
 ```
 
 # Structure
