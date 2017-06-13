@@ -93,13 +93,21 @@
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.interval_overlap">
 <code class="descname">interval_overlap</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.interval_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds all intervals that overlap specified interval.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>start (long): start chromosomal position of the interval.
-end (long): end chromosomal position of the interval.</dd>
-<dt>Yields:</dt>
-<dd>IntervalTreeNode: overlapping interval.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – start chromosomal position of the interval.</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – end chromosomal position of the interval.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>IntervalTreeNode</em> – overlapping interval.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -141,12 +149,16 @@ end (long): end chromosomal position of the interval.</dd>
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.point_intersect">
 <code class="descname">point_intersect</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.point_intersect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds all intervals that intersect the specified chromosomal position.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>position (long): chromosomal position.</dd>
-<dt>Yields:</dt>
-<dd>IntervalTreeNonde: intersecting interval.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – chromosomal position.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>IntervalTreeNonde</em> – intersecting interval.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

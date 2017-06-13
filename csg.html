@@ -157,10 +157,10 @@
 <dt id="csg.jupyter.df_to_uri">
 <code class="descclassname">csg.jupyter.</code><code class="descname">df_to_uri</code><span class="sig-paren">(</span><em>dframe</em>, <em>link_text=’Download’</em>, <em>filename=’table.tab’</em>, <em>sep=’\t’</em>, <em>na_rep=’NA’</em>, <em>encoding=’utf-8’</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.jupyter.df_to_uri" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a pandas data frame into a data URI HTML element.</p>
-<p>This returns an HTML &lt;a&gt; element inline in the notebook, with <cite>link_text</cite> shown. 
+<p>This returns an HTML &lt;a&gt; element inline in the notebook, with <cite>link_text</cite> shown.
 When the user clicks on the link, the browser will attempt to download the data frame
 named as <cite>filename</cite>.</p>
-<p>This currently does not work for very large data URIs in Chrome only. 
+<p>This currently does not work for very large data URIs in Chrome only.
 See: <a class="reference external" href="http://stackoverflow.com/questions/16761927/aw-snap-when-data-uri-is-too-large">http://stackoverflow.com/questions/16761927/aw-snap-when-data-uri-is-too-large</a></p>
 </dd></dl>
 
@@ -181,10 +181,8 @@ See: <a class="reference external" href="http://stackoverflow.com/questions/1676
 <dd><p>Helper function to create text in the IPython notebook, using string
 formatting operations.</p>
 <p>Displays the text as an HTML element inline.</p>
-<dl class="docutils">
-<dt>Example: </dt>
-<dd>text(“There were {neqtls} eQTL variants discovered.”,neqtls=100)</dd>
-</dl>
+<p class="rubric">Example</p>
+<p>text(“There were {neqtls} eQTL variants discovered.”,neqtls=100)</p>
 </dd></dl>
 
 </div>

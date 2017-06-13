@@ -54,16 +54,27 @@
 <code class="descclassname">csg.genome.coordinates.</code><code class="descname">assign_locus</code><span class="sig-paren">(</span><em>df</em>, <em>col_chrom</em>, <em>col_pos</em>, <em>locus_name=’LOCUS’</em>, <em>dist=250000</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genome.coordinates.assign_locus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigns a locus number to each variant in a data frame of variants with chromosome and position specified.</p>
 <p>A column will be inserted containing the locus number assigned to each variant.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>df: data frame, each row is a variant.
-chrom: chromosome column name.
-pos: position column name.
-locus_name (str): What should we call the locus number column? 
-dist (int): base-pair distance between variants required to assign a new locus number</dd>
-<dt>Returns:</dt>
-<dd>DataFrame: with an added column specifying the locus number</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> – data frame, each row is a variant.</li>
+<li><strong>chrom</strong> – chromosome column name.</li>
+<li><strong>pos</strong> – position column name.</li>
+<li><strong>locus_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – What should we call the locus number column?</li>
+<li><strong>dist</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – base-pair distance between variants required to assign a new locus number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">with an added column specifying the locus number</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -71,7 +82,7 @@ dist (int): base-pair distance between variants required to assign a new locus n
 <code class="descclassname">csg.genome.coordinates.</code><code class="descname">chrom_int</code><span class="sig-paren">(</span><em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genome.coordinates.chrom_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a chromosome string (e.g. chr9 or chrX) to an integer</p>
 <dl class="docutils">
-<dt>The conversion ends up as: </dt>
+<dt>The conversion ends up as:</dt>
 <dd>X -&gt; 23
 Y -&gt; 24
 MT -&gt; 25
