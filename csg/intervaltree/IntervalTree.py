@@ -1,3 +1,8 @@
+"""A tree structure for efficient interval-based queries.
+
+.. moduleauthor:: Daniel Taliun <dtaliun@umich.edu>
+
+"""
 
 class IntervalTreeNode:
    BLACK = 0
@@ -79,6 +84,8 @@ class IntervalTreeNode:
 
 
 class IntervalTree:
+   """This class implements the interval tree based on red-black binary tree.
+   """
 
    def __init__(self):
       self.root = None
@@ -199,6 +206,15 @@ class IntervalTree:
 
 
    def point_intersect(self, position):
+      """Finds all intervals that intersect the specified chromosomal position.
+
+      Args:
+         position (long): chromosomal position.
+
+      Yields:
+         IntervalTreeNonde: intersecting interval.
+
+      """
       if self.root is not None:
          nodes = [self.root]
          while nodes:
@@ -211,6 +227,16 @@ class IntervalTree:
                yield node
 
    def interval_overlap(self, start, end):
+      """Finds all intervals that overlap specified interval.
+
+      Args:
+         start (long): start chromosomal position of the interval.
+         end (long): end chromosomal position of the interval.
+
+      Yields:
+         IntervalTreeNode: overlapping interval.
+
+      """
       if self.root is not None:
          nodes = [self.root]
          while nodes:
