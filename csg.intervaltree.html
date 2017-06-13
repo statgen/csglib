@@ -49,10 +49,12 @@
 </div>
 <div class="section" id="module-csg.intervaltree.IntervalTree">
 <span id="csg-intervaltree-intervaltree-module"></span><h2>csg.intervaltree.IntervalTree module<a class="headerlink" href="#module-csg.intervaltree.IntervalTree" title="Permalink to this headline">¶</a></h2>
+<p>A tree structure for efficient interval-based queries.</p>
 <dl class="class">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree">
 <em class="property">class </em><code class="descclassname">csg.intervaltree.IntervalTree.</code><code class="descname">IntervalTree</code><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>This class implements the interval tree based on red-black binary tree.</p>
+<dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.add">
 <code class="descname">add</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.add" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -90,7 +92,15 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.interval_overlap">
 <code class="descname">interval_overlap</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.interval_overlap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Finds all intervals that overlap specified interval.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>start (long): start chromosomal position of the interval.
+end (long): end chromosomal position of the interval.</dd>
+<dt>Yields:</dt>
+<dd>IntervalTreeNode: overlapping interval.</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.k_first">
@@ -130,7 +140,14 @@
 <dl class="method">
 <dt id="csg.intervaltree.IntervalTree.IntervalTree.point_intersect">
 <code class="descname">point_intersect</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.intervaltree.IntervalTree.IntervalTree.point_intersect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Finds all intervals that intersect the specified chromosomal position.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>position (long): chromosomal position.</dd>
+<dt>Yields:</dt>
+<dd>IntervalTreeNonde: intersecting interval.</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
