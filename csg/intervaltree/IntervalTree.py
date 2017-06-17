@@ -19,8 +19,8 @@ class IntervalTreeNode:
 
    """
 
-   BLACK = 0
-   RED = 1
+   _BLACK = 0
+   _RED = 1
 
    def __init__(self, start, end, max_end, value, deviation, color, left, right):
       self.start = start
@@ -120,7 +120,7 @@ class IntervalTree:
 
 
    def __add(self, start, end, value, deviation):
-      new_node = IntervalTreeNode(start, end, end, value, deviation, IntervalTreeNode.RED, None, None)
+      new_node = IntervalTreeNode(start, end, end, value, deviation, IntervalTreeNode._RED, None, None)
 
       if self.root is None:
          self.root = new_node
@@ -154,14 +154,14 @@ class IntervalTree:
 
    def __balance(self, node):
       if node.parent is None:
-         node.color = IntervalTreeNode.BLACK  # Root is always black
-      elif node.parent.color != IntervalTreeNode.BLACK: # Parent of RED node must be black
+         node.color = IntervalTreeNode._BLACK  # Root is always black
+      elif node.parent.color != IntervalTreeNode._BLACK: # Parent of RED node must be black
          uncle = node.get_uncle()
          grandparent = node.get_grandparent() # at this point, grandparent exists always
-         if uncle is not None and uncle.color == IntervalTreeNode.RED: # All children of red node must be black
-            node.parent.color = IntervalTreeNode.BLACK
-            uncle.color = IntervalTreeNode.BLACK
-            grandparent.color = IntervalTreeNode.RED
+         if uncle is not None and uncle.color == IntervalTreeNode._RED: # All children of red node must be black
+            node.parent.color = IntervalTreeNode._BLACK
+            uncle.color = IntervalTreeNode._BLACK
+            grandparent.color = IntervalTreeNode._RED
             self.__balance(grandparent)
          else:
             # Unify subtree for the last step with appropriate rotations: parent and its child must be on the same side relatively to grandparent (either left or right).
@@ -172,8 +172,8 @@ class IntervalTree:
                self.__rotate_right(node.parent)
                node = node.right
             # The last step:
-            node.parent.color = IntervalTreeNode.BLACK
-            grandparent.color = IntervalTreeNode.RED
+            node.parent.color = IntervalTreeNode._BLACK
+            grandparent.color = IntervalTreeNode._RED
             if node is node.parent.left and node.parent is grandparent.left:
                self.__rotate_right(grandparent)
             else:
@@ -604,7 +604,7 @@ class IntervalTree:
          if node is not None:
             print_node(node.left, depth+1)
             rv.append('{:<{}}'.format(
-               ' '*3*depth + ('blk' if node.color == IntervalTreeNode.BLACK else 'red'),
+               ' '*3*depth + ('blk' if node.color == IntervalTreeNode._BLACK else 'red'),
                height*3) +
                       ' [{start:2},{end:2}]({max_end:2}) : {values}'.format(**node.__dict__))
             print_node(node.right, depth+1)
