@@ -22,7 +22,7 @@ class IntervalTreeNode:
    _BLACK = 0
    _RED = 1
 
-   def __init__(self, start, end, max_end, value, deviation, color, left, right):
+   def __init__(self, start, end, max_end, value, color, left, right):
       self.start = start
       self.end = end
       self.max_end = max_end
@@ -30,7 +30,6 @@ class IntervalTreeNode:
          self.values = [value]
       else:
          self.values = []
-      self.deviation = deviation
       self.color = color
       self.parent = None
 
@@ -116,11 +115,11 @@ class IntervalTree:
          value: (optional) associated value of any type.
 
       """
-      self.__add(start, end, value, 0)
+   #   self.__add(start, end, value, 0)
 
 
-   def __add(self, start, end, value, deviation):
-      new_node = IntervalTreeNode(start, end, end, value, deviation, IntervalTreeNode._RED, None, None)
+   #def __add(self, start, end, value, deviation):
+      new_node = IntervalTreeNode(start, end, end, value, IntervalTreeNode._RED, None, None)
 
       if self.root is None:
          self.root = new_node

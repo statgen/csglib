@@ -4,20 +4,19 @@ from csg.intervaltree.IntervalTree import *
 class TestIntervalTreeNode(unittest.TestCase):
 
    def test_node_construction(self):
-      left_child = IntervalTreeNode(0, 1, 1, 'value', 0, IntervalTreeNode._RED, None, None)
+      left_child = IntervalTreeNode(0, 1, 1, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(left_child.start, 0)
       self.assertEqual(left_child.end, 1)
       self.assertEqual(left_child.max_end, 1)
       self.assertEqual(len(left_child.values), 1)
       self.assertEqual(left_child.values[0], 'value')
-      self.assertEqual(left_child.deviation, 0)
       self.assertEqual(left_child.color, IntervalTreeNode._RED)
       self.assertIsNone(left_child.left)
       self.assertIsNone(left_child.right)
 
-      right_child = IntervalTreeNode(0, 1, 1, 'value', 0, IntervalTreeNode._RED, None, None)
+      right_child = IntervalTreeNode(0, 1, 1, 'value', IntervalTreeNode._RED, None, None)
 
-      parent = IntervalTreeNode(0, 1, 1, 'value', 0, IntervalTreeNode._RED, left_child, right_child)
+      parent = IntervalTreeNode(0, 1, 1, 'value', IntervalTreeNode._RED, left_child, right_child)
       self.assertEqual(id(left_child.parent), id(parent))
       self.assertEqual(id(right_child.parent), id(parent))
       self.assertEqual(id(parent.left), id(left_child))
@@ -25,8 +24,8 @@ class TestIntervalTreeNode(unittest.TestCase):
       self.assertEqual(id(left_child), id(right_child.get_sibling()))
       self.assertEqual(id(right_child), id(left_child.get_sibling()))
 
-      uncle = IntervalTreeNode(0, 1, 1, 'value', 0, IntervalTreeNode._RED, None, None)
-      grandparent = IntervalTreeNode(0, 1, 1, 'value', 0, IntervalTreeNode._RED, parent, uncle)
+      uncle = IntervalTreeNode(0, 1, 1, 'value', IntervalTreeNode._RED, None, None)
+      grandparent = IntervalTreeNode(0, 1, 1, 'value', IntervalTreeNode._RED, parent, uncle)
       self.assertEqual(id(left_child.get_uncle()), id(uncle))
       self.assertEqual(id(right_child.get_uncle()), id(uncle))
       self.assertEqual(id(left_child.get_grandparent()), id(grandparent))
@@ -34,39 +33,39 @@ class TestIntervalTreeNode(unittest.TestCase):
 
 
    def test_node_compare(self):
-      node1 = IntervalTreeNode(-2, 2, 2, 'value', 0, IntervalTreeNode._RED, None, None)
+      node1 = IntervalTreeNode(-2, 2, 2, 'value', IntervalTreeNode._RED, None, None)
 
-      node2 = IntervalTreeNode(-4, -3, -3, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-4, -3, -3, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), -1)
 
-      node2 = IntervalTreeNode(-3, -2, -2, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-3, -2, -2, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), -1)
 
-      node2 = IntervalTreeNode(-2, -1, -1, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-2, -1, -1, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), -1)
 
-      node2 = IntervalTreeNode(-2, 2, 2, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-2, 2, 2, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 0)
 
-      node2 = IntervalTreeNode(-2, 3, 3, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-2, 3, 3, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(-1, 1, 1, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-1, 1, 1, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(-1, 2, 2, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-1, 2, 2, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(-1, 3, 3, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-1, 3, 3, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(2, 3, 3, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(2, 3, 3, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(3, 4, 4, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(3, 4, 4, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), 1)
 
-      node2 = IntervalTreeNode(-3, 3, 1, 'value', 0, IntervalTreeNode._RED, None, None)
+      node2 = IntervalTreeNode(-3, 3, 1, 'value', IntervalTreeNode._RED, None, None)
       self.assertEqual(node2.compare(node1), -1)
 
 
