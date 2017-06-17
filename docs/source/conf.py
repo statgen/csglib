@@ -157,7 +157,7 @@ texinfo_documents = [
 ]
 
 
-
+html_show_sourcelink = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}

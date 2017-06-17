@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>csg.statistics package &#8212; csglib 0.2 documentation</title>
+    <title>csglib’s modules &#8212; csglib 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -42,29 +42,38 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="csg-statistics-package">
-<h1>csg.statistics package<a class="headerlink" href="#csg-statistics-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="csglib-s-modules">
+<h1>csglib’s modules<a class="headerlink" href="#csglib-s-modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="intervaltree">
+<span id="interval-tree"></span><h2>IntervalTree<a class="headerlink" href="#intervaltree" title="Permalink to this headline">¶</a></h2>
+<p>This module implements interval tree data structure for time efficient (log complexity) interval queries.
+The implementation is based on red-black binary tree and supports the following queries:</p>
+<ul class="simple">
+<li>find all intervals overlapping given point;</li>
+<li>find all intervals overlapping given interval;</li>
+<li>find nearest interval to the left of the given point;</li>
+<li>find nearest interval to the right of the given point;</li>
+<li>find <em>K</em> nearest intervals to the left of the given point;</li>
+<li>find <em>K</em> nearest intervals to the right of the given point;</li>
+<li>get <em>K</em> first (leftmost) intervals;</li>
+<li>get <em>K</em> last (rightmost) intervals;</li>
+<li>traverse all intervals in ascending/descending order;</li>
+<li>merge overlapping intervals;</li>
+<li>construct complementary intervals (i.e. extracts all gaps between non-overlapping intervals).</li>
+</ul>
+<p>Please, refer to <a class="reference internal" href="csg.intervaltree.html"><span class="doc">API documentation</span></a> for further details.</p>
 </div>
-<div class="section" id="module-csg.statistics.FDR">
-<span id="csg-statistics-fdr-module"></span><h2>csg.statistics.FDR module<a class="headerlink" href="#module-csg.statistics.FDR" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="csg.statistics.FDR.padjust_bh">
-<code class="descclassname">csg.statistics.FDR.</code><code class="descname">padjust_bh</code><span class="sig-paren">(</span><em>pvalues</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.statistics.FDR.padjust_bh" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="csg.statistics.FDR.padjust_qvalue">
-<code class="descclassname">csg.statistics.FDR.</code><code class="descname">padjust_qvalue</code><span class="sig-paren">(</span><em>pvalues</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.statistics.FDR.padjust_qvalue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="csg-statistics-invnorm-module">
-<h2>csg.statistics.invnorm module<a class="headerlink" href="#csg-statistics-invnorm-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-csg.statistics">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-csg.statistics" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ld">
+<span id="pyld"></span><h2>LD<a class="headerlink" href="#ld" title="Permalink to this headline">¶</a></h2>
+<p>This module is for computing linkage-disequilibrium (LD) (r, r^2) from VCFs.
+No special file format is needed - just provide phased VCFs (e.g. 1000G) compressed using bgzip and indexed using tabix.
+Supported operations:</p>
+<ul class="simple">
+<li>compute pairwise LD between pair of SNPs from any chromosomal region in VCF;</li>
+<li>compute pairwise LD between all SNPs from a specified region in VCF;</li>
+<li>provides additional routines to compute allele frequencies.</li>
+</ul>
+<p>Please, refer to <a class="reference internal" href="csg.genetics.ld.html"><span class="doc">API documentation</span></a> for further details.</p>
 </div>
 </div>
 
@@ -76,11 +85,9 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">csg.statistics package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-csg.statistics.FDR">csg.statistics.FDR module</a></li>
-<li><a class="reference internal" href="#csg-statistics-invnorm-module">csg.statistics.invnorm module</a></li>
-<li><a class="reference internal" href="#module-csg.statistics">Module contents</a></li>
+<li><a class="reference internal" href="#">csglib’s modules</a><ul>
+<li><a class="reference internal" href="#intervaltree">IntervalTree</a></li>
+<li><a class="reference internal" href="#ld">LD</a></li>
 </ul>
 </li>
 </ul>

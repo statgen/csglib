@@ -3,18 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to csglib's documentation!
+Welcome to csglib
 ==================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+The csglib is a python package for CSG group.
+This package includes standalone python tools/pipelines for various analyses as well as standalone python modules that may be re-used in other projects.
+Users are also very welcomed to copy and re-use (cherry-pick) specific code snippets from csglib in their personal projects.  
 
+:doc:`Tools <csglib_tools>`
+---------------------------
+* Genome-wide association studies (GWAS)
 
+  * InflationFromFile
+  * Harmonize
+  * GWASCatalog
 
-Indices and tables
-==================
+* Pedigrees
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  * TrioPuller
+
+:doc:`Modules <csglib_modules>`
+-------------------------------
+* :ref:`interval_tree`
+* :ref:`pyld`
+
