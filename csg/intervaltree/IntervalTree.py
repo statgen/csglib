@@ -43,6 +43,19 @@ class IntervalTreeNode:
 
 
    def compare(self, interval):
+      """Compares two intervals.
+
+      Two intevals are compared by their start position.
+      Interval with smaller start position is the leftmost.
+      If start positions are identical, then interval with smaller end position is the leftmost.
+
+      Args:
+         interval (IntervalTreeNode): second interval.
+
+      Returns:
+         int: -1 if this interval is the leftmost, 0 if both intervals are identical, 1 if the second interval is the leftmost.
+
+      """
       if self.start == interval.start:
          if self.end == interval.end:
             return 0
@@ -54,6 +67,7 @@ class IntervalTreeNode:
 
 
    def get_sibling(self):
+      """IntervalTreeNode: sibling of this node."""
       if self.parent is not None:
          if self is self.parent.left:
             return self.parent.right
@@ -63,18 +77,21 @@ class IntervalTreeNode:
 
 
    def get_uncle(self):
+      """IntervalTreeNode: uncle of this node."""
       if self.parent is not None:
          return self.parent.get_sibling()
       return None
 
 
    def get_grandparent(self):
+      """IntervalTreeNode: grandparent of this node."""
       if self.parent is not None:
          return self.parent.parent
       return None
 
 
    def get_height(self):
+      """int: the maximal height of interval tree starting from this node."""
       heights = [1]
       for node in [self.left, self.right]:
          if node is not None:
@@ -82,6 +99,7 @@ class IntervalTreeNode:
       return max(heights)
 
    def get_values_count(self):
+      """int: number of values that are stored in all IntervalTreeNode(s) starting from this one."""
       count = len(self.values)
       for node in [self.left, self.right]:
          if node is not None:
@@ -89,6 +107,7 @@ class IntervalTreeNode:
       return count
 
    def get_intervals_count(self):
+      """int: number of intervals that are referenced from this IntervalTreeNode (including it)."""
       count = 1
       for node in [self.left, self.right]:
          if node is not None:
@@ -115,10 +134,6 @@ class IntervalTree:
          value: (optional) associated value of any type.
 
       """
-   #   self.__add(start, end, value, 0)
-
-
-   #def __add(self, start, end, value, deviation):
       new_node = IntervalTreeNode(start, end, end, value, IntervalTreeNode._RED, None, None)
 
       if self.root is None:
