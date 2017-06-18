@@ -21,6 +21,23 @@ The implementation is based on red-black binary tree and supports the following 
 * merge overlapping intervals;
 * construct complementary intervals (i.e. extracts all gaps between non-overlapping intervals).
 
+Example:
+::
+
+   from csg.intervaltree.IntervalTree import IntervalTree
+   intervals = IntervalTree() # create new interval tree
+   for start, end in zip(range(1, 10), range(5, 14)): # add intervals
+      intervals.add(start, end)
+   print 'Number of intervals:', intervals.get_intervals_count()
+   for interval in intervals.descending(): # list intervals in descending order
+      print interval.start, interval.end
+   for interval in intervals.point_intersect(10): # find all intervals that intersect position 10
+      print interval.start, interval.end
+   for interval in intervals.interval_overlap(2, 5): # find all intervals that overlap interval [2, 5]
+      print interval.start, interval.end
+   merged_intervals = intervals.merge() # merge all overlapping intervals
+   print 'Number of intervals after merging:', merged_intervals.get_intervals_count()
+
 Please, refer to :doc:`API documentation <csg.intervaltree>` for further details.
 
 .. _pyld:
