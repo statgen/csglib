@@ -595,6 +595,24 @@ class IntervalTree:
       return new_tree
 
 
+   def get_coverage(self):
+      """long: Total length of area covered with at least one interval."""
+      length = 0
+      end = next(self.ascending(), None)
+      if end:
+          end = end.start - 1
+      else:
+          end = 0
+      for interval in self.ascending():
+         if interval.start > end:
+            length += abs(interval.end - interval.start) + 1
+            end = interval.end
+         elif interval.end > end:
+            length += abs(interval.end - end - 1) + 1
+            end = interval.end
+      return length
+
+
    def get_values_count(self):
       """int: Total number of stored values within intervals in the interval tree."""
       return 0 if self.root is None else self.root.get_values_count()

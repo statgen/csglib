@@ -584,6 +584,41 @@ class TestIntervalTree(unittest.TestCase):
          self.assertEqual(len(obs.values), 0)
 
 
+   def test_coverage(self):
+      # empty tree
+      tree = IntervalTree()
+      self.assertEqual(tree.get_coverage(), 0)
+
+      # single interval with start >0
+      tree = IntervalTree()
+      tree.add(1, 10)
+      self.assertEqual(tree.get_coverage(), 10)
+
+      # single interval with end < 0
+      tree = IntervalTree()
+      tree.add(-10, -1)
+      self.assertEqual(tree.get_coverage(), 10)
+
+      # two non-verlapping intervals
+      tree = IntervalTree()
+      tree.add(1, 10)
+      tree.add(-10, -1)
+      self.assertEquals(tree.get_coverage(), 20)
+
+      # overlapping intervals
+      tree = IntervalTree()
+      tree.add(5, 9)
+      tree.add(5, 20)
+      tree.add(1, 10)
+      tree.add(-10, -1)
+      tree.add(-9, -5)
+      tree.add(-20, -9)
+      self.assertEquals(tree.get_coverage(), 40)
+
+      # must be same after merging intervals
+      self.assertEquals(tree.get_coverage(), tree.merge().get_coverage())
+
+
 if __name__ == '__main__':
    suite = unittest.TestSuite()
    test_loader = unittest.TestLoader()
