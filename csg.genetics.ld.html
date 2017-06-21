@@ -51,42 +51,43 @@
 <span id="csg-genetics-ld-pyld-module"></span><h2>csg.genetics.ld.pyld module<a class="headerlink" href="#module-csg.genetics.ld.pyld" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="csg.genetics.ld.pyld.Haplotypes">
-<em class="property">class </em><code class="descclassname">csg.genetics.ld.pyld.</code><code class="descname">Haplotypes</code><span class="sig-paren">(</span><em>size</em>, <em>chrom</em>, <em>position</em>, <em>ref</em>, <em>alt</em>, <em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<em class="property">class </em><code class="descclassname">csg.genetics.ld.pyld.</code><code class="descname">Haplotypes</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><code class="xref py py-class docutils literal"><span class="pre">csg.genetics.ld.pyld.Haplotypes</span></code></a></p>
+<p>This class represent phased genotypes at chromosomal region.</p>
 <dl class="attribute">
-<dt id="csg.genetics.ld.pyld.Haplotypes.alt">
-<code class="descname">alt</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.alt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
+<dt id="csg.genetics.ld.pyld.Haplotypes.size">
+<code class="descname">size</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – number of variants (M).</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="csg.genetics.ld.pyld.Haplotypes.chrom">
 <code class="descname">chrom</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.chrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="csg.genetics.ld.pyld.Haplotypes.haplotypes">
-<code class="descname">haplotypes</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.haplotypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 5</p>
+<dd><p><em>list</em> – list of length M with chromosome names.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="csg.genetics.ld.pyld.Haplotypes.position">
 <code class="descname">position</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.position" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
+<dd><p><em>list</em> – list of length M with chromosomal positions (long type).</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="csg.genetics.ld.pyld.Haplotypes.ref">
 <code class="descname">ref</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.ref" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
+<dd><p><em>list</em> – list of length M with reference alleles (string type).</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="csg.genetics.ld.pyld.Haplotypes.size">
-<code class="descname">size</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
+<dt id="csg.genetics.ld.pyld.Haplotypes.alt">
+<code class="descname">alt</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.alt" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – list of length M with alternate alleles (string type).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="csg.genetics.ld.pyld.Haplotypes.haplotypes">
+<code class="descname">haplotypes</code><a class="headerlink" href="#csg.genetics.ld.pyld.Haplotypes.haplotypes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>numpy.ndarray</em> – M x N matrix of genotypes (coded as 0 and 1), where N is number of individuals times 2.</p>
 </dd></dl>
 
 </dd></dl>
@@ -96,58 +97,181 @@
 <em class="property">class </em><code class="descclassname">csg.genetics.ld.pyld.</code><code class="descname">LD</code><a class="headerlink" href="#csg.genetics.ld.pyld.LD" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.add_vcf">
-<code class="descname">add_vcf</code><span class="sig-paren">(</span><em>vcf_path</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.add_vcf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="csg.genetics.ld.pyld.LD.chunk_M">
-<code class="descname">chunk_M</code><em class="property"> = 1000</em><a class="headerlink" href="#csg.genetics.ld.pyld.LD.chunk_M" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">add_vcf</code><span class="sig-paren">(</span><em>vcf</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.add_vcf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens VCF file with phased genotypes.</p>
+<p>Phased genotypes must be stored in VCF format: in single VCF file, or multiple VCF files split by chromosome.
+Each VCF file must be indexed using tabix.
+If VCF files are split by chromosome, then envoke this method for each file individually.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vcf</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – path to VCF file which is compressed using bgzip and indexed using tabix.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">Exception</span></code> – Raises an exception if: (a) no VCF header; (b) numbers of individuals in multiple VCF files are different.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.compute_r">
 <code class="descname">compute_r</code><span class="sig-paren">(</span><em>haplotypes1</em>, <em>haplotypes2</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes r coefficient of linkage-disequilibrium between two variants.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>haplotypes1</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for the first variant.</li>
+<li><strong>haplotypes2</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for the second variant.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">r coefficient of linkage-disequilibrium.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.float64</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.compute_r_matrix">
 <code class="descname">compute_r_matrix</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r_matrix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes r coefficient of linkage-disequilibrium between all variants from the provided set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for a set of variants.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">haplotypes.size x haplotypes.size symmetric matrix of r coefficients of linkage disequilibrium.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.compute_region_freq">
 <code class="descname">compute_region_freq</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_region_freq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes allele frequencies for set of variants.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for set of variants.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">array of size haplotypes.size with alternate allele frequencies.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.compute_variant_freq">
 <code class="descname">compute_variant_freq</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_variant_freq" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes allele frequencies for single variant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for single variant.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">alternate allele frequency.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.float64</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.get_region_haplotypes">
 <code class="descname">get_region_haplotypes</code><span class="sig-paren">(</span><em>chrom</em>, <em>start_position</em>, <em>end_position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.get_region_haplotypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reads phased genotypes at specified chromosomal region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chrom</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – chromosome name.</li>
+<li><strong>start_position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – start position of chromosomal region in base pairs.</li>
+<li><strong>end_position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – end position of chromosomal region in base pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">phased genotypes at specified chromosomal region.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes">Haplotypes</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.get_variant_haplotypes">
 <code class="descname">get_variant_haplotypes</code><span class="sig-paren">(</span><em>chrom</em>, <em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.get_variant_haplotypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reads phased genotypes at specified chromosome and position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chrom</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – chromosome name.</li>
+<li><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – chromosomal position in base pairs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">phased genotypes at specified chromosome and position.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes">Haplotypes</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.get_variant_haplotypes_strict">
 <code class="descname">get_variant_haplotypes_strict</code><span class="sig-paren">(</span><em>chrom</em>, <em>position</em>, <em>ref</em>, <em>alt</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.get_variant_haplotypes_strict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="csg.genetics.ld.pyld.LD.incr_M">
-<code class="descname">incr_M</code><em class="property"> = 1000</em><a class="headerlink" href="#csg.genetics.ld.pyld.LD.incr_M" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Reads phased genotypes at variant that matches specified chromosome, position, reference and alternate alleles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chrom</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – chromosome name.</li>
+<li><strong>position</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#long" title="(in Python v2.7)"><em>long</em></a>) – chromosomal position in base pairs.</li>
+<li><strong>ref</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – reference allele.</li>
+<li><strong>alt</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) – alternate allele.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">phased genotypes at specified variant.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes">Haplotypes</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="csg.genetics.ld.pyld.LD.release_vcfs">
 <code class="descname">release_vcfs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.release_vcfs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Closes all opened VCF files.</p>
+</dd></dl>
 
 </dd></dl>
 
