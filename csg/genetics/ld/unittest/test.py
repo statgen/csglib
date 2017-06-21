@@ -91,7 +91,6 @@ class TestLD(unittest.TestCase):
       self.assertListEqual(haplotypes.position, [14403183, 16655993, 19485821])
       self.assertListEqual(haplotypes.ref, ['C', 'T', 'A'])
       self.assertListEqual(haplotypes.alt, ['A', 'G', 'G'])
-
       ld.release_vcfs()
 
    def test_compute_variant_freq(self):
@@ -111,7 +110,6 @@ class TestLD(unittest.TestCase):
        freq = ld.compute_variant_freq(haplotypes)
        id1 = haplotypes.chrom[0] + '_' + str(haplotypes.position[0])
        self.assertAlmostEqual(freq, self.precomputed_freq[id1])
-
        ld.release_vcfs()
 
    def test_compute_region_freq(self):
@@ -127,7 +125,6 @@ class TestLD(unittest.TestCase):
       for i in xrange(0, haplotypes.size):
          id1 = haplotypes.chrom[i] + '_' + str(haplotypes.position[i])
          self.assertAlmostEqual(freq[i], self.precomputed_freq[id1], places = 6)
-
       ld.release_vcfs()
 
    def test_compute_r(self):
@@ -146,7 +143,6 @@ class TestLD(unittest.TestCase):
        r = ld.compute_r(haplotypes1, haplotypes2)
        expected_rsquare = self.precomputed_ld[id1][id2]
        self.assertAlmostEqual(r ** 2, expected_rsquare)
-
        ld.release_vcfs()
 
    def test_compute_r_matrix(self):
@@ -175,7 +171,6 @@ class TestLD(unittest.TestCase):
                   self.assertTrue(math.isnan(r[i, j]))
                else:
                   self.assertAlmostEqual(r[i, j] ** 2, 1.0)
-
       ld.release_vcfs()
 
 

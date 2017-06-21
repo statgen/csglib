@@ -63,16 +63,23 @@ The implementation is based on red-black binary tree and supports the following 
 </ul>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">csg.intervaltree.IntervalTree</span> <span class="k">import</span> <span class="n">IntervalTree</span>
+
 <span class="n">intervals</span> <span class="o">=</span> <span class="n">IntervalTree</span><span class="p">()</span> <span class="c1"># create new interval tree</span>
+
 <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">14</span><span class="p">)):</span> <span class="c1"># add intervals</span>
    <span class="n">intervals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+
 <span class="nb">print</span> <span class="s1">&#39;Number of intervals:&#39;</span><span class="p">,</span> <span class="n">intervals</span><span class="o">.</span><span class="n">get_intervals_count</span><span class="p">()</span>
+
 <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="o">.</span><span class="n">descending</span><span class="p">():</span> <span class="c1"># list intervals in descending order</span>
    <span class="nb">print</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span>
+
 <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="o">.</span><span class="n">point_intersect</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span> <span class="c1"># find all intervals that intersect position 10</span>
    <span class="nb">print</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span>
+
 <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="o">.</span><span class="n">interval_overlap</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span> <span class="c1"># find all intervals that overlap interval [2, 5]</span>
    <span class="nb">print</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span>
+
 <span class="n">merged_intervals</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">merge</span><span class="p">()</span> <span class="c1"># merge all overlapping intervals</span>
 <span class="nb">print</span> <span class="s1">&#39;Number of intervals after merging:&#39;</span><span class="p">,</span> <span class="n">merged_intervals</span><span class="o">.</span><span class="n">get_intervals_count</span><span class="p">()</span>
 </pre></div>
@@ -89,6 +96,16 @@ Supported operations:</p>
 <li>compute pairwise LD between all SNPs from a specified region in VCF;</li>
 <li>provides additional routines to compute allele frequencies.</li>
 </ul>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">csg.genetics.ld.pyld</span> <span class="k">import</span> <span class="n">LD</span>
+
+<span class="n">ld</span> <span class="o">=</span> <span class="n">LD</span><span class="p">()</span>
+<span class="n">ld</span><span class="o">.</span><span class="n">add_vcf</span><span class="p">(</span><span class="s1">&#39;chr20.vcf.gz&#39;</span><span class="p">)</span> <span class="c1"># open VCF for chromosome 20</span>
+<span class="n">ld</span><span class="o">.</span><span class="n">add_vcf</span><span class="p">(</span><span class="s1">&#39;chr21.vcf.gz&#39;</span><span class="p">)</span> <span class="c1"># open VCF for chromosome 21</span>
+
+<span class="n">haplotypes</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">get_region_haplotypes</span><span class="p">(</span><span class="s1">&#39;20&#39;</span><span class="p">,</span> <span class="mi">11650214</span><span class="p">,</span> <span class="mi">60759931</span><span class="p">)</span> <span class="c1"># read phased genotypes</span>
+</pre></div>
+</div>
 <p>Please, refer to <a class="reference internal" href="csg.genetics.ld.html"><span class="doc">API documentation</span></a> for further details.</p>
 </div>
 </div>

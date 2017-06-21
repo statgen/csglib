@@ -97,8 +97,26 @@ a target set of alleles (a1, a2). We assume the effects are relative to o1.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="csg-genetics-cyalleles-module">
-<h2>csg.genetics.cyalleles module<a class="headerlink" href="#csg-genetics-cyalleles-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-csg.genetics.cyalleles">
+<span id="csg-genetics-cyalleles-module"></span><h2>csg.genetics.cyalleles module<a class="headerlink" href="#module-csg.genetics.cyalleles" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="csg.genetics.cyalleles.calleles">
+<code class="descclassname">csg.genetics.cyalleles.</code><code class="descname">calleles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.cyalleles.calleles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two arrays, each of which contains an allele (e.g. an effect allele column, and non-effect allele column),
+return an array of the sorted alleles from each row.</p>
+<p>For example:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>allele1 allele2 calleles</dt>
+<dd>T       A      A,T
+G       A      A,G
+A       C      A,C</dd>
+</dl>
+</div></blockquote>
+<p>This is mainly useful to test if sets of alleles are identical in two datasets.</p>
+<p>It is cythonized to be used on very large datasets (eQTLs.)</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-csg.genetics.hwe">
 <span id="csg-genetics-hwe-module"></span><h2>csg.genetics.hwe module<a class="headerlink" href="#module-csg.genetics.hwe" title="Permalink to this headline">¶</a></h2>
@@ -127,7 +145,7 @@ a target set of alleles (a1, a2). We assume the effects are relative to o1.</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-csg.genetics.alleles">csg.genetics.alleles module</a></li>
-<li><a class="reference internal" href="#csg-genetics-cyalleles-module">csg.genetics.cyalleles module</a></li>
+<li><a class="reference internal" href="#module-csg.genetics.cyalleles">csg.genetics.cyalleles module</a></li>
 <li><a class="reference internal" href="#module-csg.genetics.hwe">csg.genetics.hwe module</a></li>
 <li><a class="reference internal" href="#module-csg.genetics">Module contents</a></li>
 </ul>
