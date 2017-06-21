@@ -66,10 +66,36 @@ Example:
    from csg.genetics.ld.pyld import LD
 
    ld = LD()
-   ld.add_vcf('chr20.vcf.gz') # open VCF for chromosome 20
-   ld.add_vcf('chr21.vcf.gz') # open VCF for chromosome 21 
 
-   haplotypes = ld.get_region_haplotypes('20', 11650214, 60759931) # read phased genotypes 
+   ld.add_vcf('genotypes.phased.vcf.gz') # open VCF with all chromosomes
+   # Alternatively, you may load VCF files by chromosome:
+   # ld.add_vcf('chr1.vcf.gz') 
+   # ld.add_vcf('chr2.vcf.gz')
+   # ...
+   # ld.add_vcf('chr22.vcf.gz')
+
+   haplotypes = ld.get_region_haplotypes('20', 11650214, 60759931) # read phased genotypes in 20:11650214-60759931 
+   
+   freqs = ld.compute_freq(haplotypes) # compute alternative allele frequencies
+   for i in xrange(0, haploypes.size):
+      print haplotypes.chrom[i], haplotypes.position[i], freqs[i]
+
+   r = ld.compute_r_pairwise(haplotypes) # compute LD between all variants in 20:11650214-60759931
+   for i in xrange(0, haplotypes.size):
+      for j in xrange(i, haplotypes.size):
+         print haplotypes.chrom[i], haplotypes.position[i], haplotypes.position[2], r[i, j] ** 2
+
+   haplotypes1 = ld.get_variant_haplotypes('20', 11650214)
+   r = ld.compute_r_cross(haplotypes1, haplotypes) # compute LD between variant 20:11650214 and all variants in 20:11650214-60759931
+   for i in xrange(0, haplotypes1.size):
+      for j in xrange(0, haplotypes.size):
+         print haplotypes1.chrom[i], haplotypes1.position[i], haplotypes.position[j], r[i, j] ** 2
+
+   haplotypes2 = ld.get_variant_haplotypes('20', 16655993)
+   r = ld.compute_r_cross(haplotypes1, haplotypes2) # compute LD between vatiants 20:11650214 and 20:16655993
+   print haplotypes1.chrom[0], haplotypes1.position[0], haplotypes2.position[0], r[0, 0] ** 2
+
+   ld.release_vcfs() # close VCF files
 
 
 Please, refer to :doc:`API documentation <csg.genetics.ld>` for further details.

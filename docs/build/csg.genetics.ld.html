@@ -115,56 +115,14 @@ If VCF files are split by chromosome, then envoke this method for each file indi
 </dd></dl>
 
 <dl class="method">
-<dt id="csg.genetics.ld.pyld.LD.compute_r">
-<code class="descname">compute_r</code><span class="sig-paren">(</span><em>haplotypes1</em>, <em>haplotypes2</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes r coefficient of linkage-disequilibrium between two variants.</p>
+<dt id="csg.genetics.ld.pyld.LD.compute_freq">
+<code class="descname">compute_freq</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes alternate allele frequencies for set of variants.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>haplotypes1</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for the first variant.</li>
-<li><strong>haplotypes2</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for the second variant.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">r coefficient of linkage-disequilibrium.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.float64</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="csg.genetics.ld.pyld.LD.compute_r_matrix">
-<code class="descname">compute_r_matrix</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes r coefficient of linkage-disequilibrium between all variants from the provided set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for a set of variants.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">haplotypes.size x haplotypes.size symmetric matrix of r coefficients of linkage disequilibrium.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="csg.genetics.ld.pyld.LD.compute_region_freq">
-<code class="descname">compute_region_freq</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_region_freq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes allele frequencies for set of variants.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for set of variants.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes of variants.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">array of size haplotypes.size with alternate allele frequencies.</td>
 </tr>
@@ -175,18 +133,52 @@ If VCF files are split by chromosome, then envoke this method for each file indi
 </dd></dl>
 
 <dl class="method">
-<dt id="csg.genetics.ld.pyld.LD.compute_variant_freq">
-<code class="descname">compute_variant_freq</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_variant_freq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes allele frequencies for single variant.</p>
+<dt id="csg.genetics.ld.pyld.LD.compute_r_cross">
+<code class="descname">compute_r_cross</code><span class="sig-paren">(</span><em>haplotypes1</em>, <em>haplotypes2</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r_cross" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes r coefficient of linkage-disequilibrium between pairs of variants in two sets.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for single variant.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>haplotypes1</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for variants in first set.</li>
+<li><strong>haplotypes2</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for variants in second set.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">alternate allele frequency.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>haplotypes1.size x haplotypes2.size matrix of r coefficients of linkage-disequilibrium.</dt>
+<dd><p class="first last">Matrix rows correspond to variants in first set, while columns correspond to variants in second set.
+Both rows and columns have the same order as variants in haplotypes1 and haplotypes2 objects, correspondingly.</p>
+</dd>
+</dl>
+</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.float64</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="csg.genetics.ld.pyld.LD.compute_r_pairwise">
+<code class="descname">compute_r_pairwise</code><span class="sig-paren">(</span><em>haplotypes</em><span class="sig-paren">)</span><a class="headerlink" href="#csg.genetics.ld.pyld.LD.compute_r_pairwise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes r coefficient of linkage-disequilibrium between all variants in the given set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>haplotypes</strong> (<a class="reference internal" href="#csg.genetics.ld.pyld.Haplotypes" title="csg.genetics.ld.pyld.Haplotypes"><em>Haplotypes</em></a>) – genotypes for a set of variants.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>haplotypes.size x haplotypes.size symmetric matrix of r coefficients of linkage disequilibrium.</dt>
+<dd>Matrix rows and columns have the same order as variants in haplotypes object.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -276,12 +268,6 @@ If VCF files are split by chromosome, then envoke this method for each file indi
 </dd></dl>
 
 </div>
-<div class="section" id="module-csg.genetics.ld.pyld_example">
-<span id="csg-genetics-ld-pyld-example-module"></span><h2>csg.genetics.ld.pyld_example module<a class="headerlink" href="#module-csg.genetics.ld.pyld_example" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="csg-genetics-ld-pyld-example-config-module">
-<h2>csg.genetics.ld.pyld_example_config module<a class="headerlink" href="#csg-genetics-ld-pyld-example-config-module" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-csg.genetics.ld">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-csg.genetics.ld" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -298,8 +284,6 @@ If VCF files are split by chromosome, then envoke this method for each file indi
 <li><a class="reference internal" href="#">csg.genetics.ld package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-csg.genetics.ld.pyld">csg.genetics.ld.pyld module</a></li>
-<li><a class="reference internal" href="#module-csg.genetics.ld.pyld_example">csg.genetics.ld.pyld_example module</a></li>
-<li><a class="reference internal" href="#csg-genetics-ld-pyld-example-config-module">csg.genetics.ld.pyld_example_config module</a></li>
 <li><a class="reference internal" href="#module-csg.genetics.ld">Module contents</a></li>
 </ul>
 </li>

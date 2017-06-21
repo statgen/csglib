@@ -90,7 +90,7 @@ class LD:
                haplotypes[0, 2 * i - 18] = np.int(row[i][0])
                haplotypes[0, 2 * i - 17] = np.int(row[i][2])
             return Haplotypes(size = 1, chrom = [row[0]], position = [long(row[1])], ref = [row[3]], alt = [row[4]], haplotypes = haplotypes)
-      return None
+      return Haplotypes(size = 0, chrom = [], position = [], ref = [], alt = [], haplotypes = np.empty([0, self.N], dtype = np.int, order = 'C'))
 
 
    def get_variant_haplotypes_strict(self, chrom, position, ref, alt):
@@ -118,7 +118,8 @@ class LD:
                haplotypes[0, 2 * i - 18] = np.int(row[i][0])
                haplotypes[0, 2 * i - 17] = np.int(row[i][2])
             return Haplotypes(size = 1, chrom = [row[0]], position = [long(row[1])], ref = [row[3]], alt = [row[4]], haplotypes = haplotypes)
-      return None
+      return Haplotypes(size = 0, chrom = [], position = [], ref = [], alt = [], haplotypes = np.empty([0, self.N], dtype = np.int, order = 'C'))
+
 
    def get_region_haplotypes(self, chrom, start_position, end_position):
       """Reads phased genotypes at specified chromosomal region.
@@ -159,68 +160,60 @@ class LD:
             if M != max_M:
                haplotypes.resize(M, self.N)
             return Haplotypes(size = M, chrom = variant_chrom, position = variant_position, ref = variant_ref, alt = variant_alt, haplotypes = haplotypes)
-      return None
+      return Haplotypes(size = 0, chrom = [], position = [], ref = [], alt = [], haplotypes = np.empty([0, self.N], dtype = np.int, order = 'C'))
 
-   def compute_variant_freq(self, haplotypes):
-      """Computes allele frequencies for single variant.
 
-      Args:
-         haplotypes (Haplotypes): genotypes for single variant.
-
-      Returns:
-         numpy.float64: alternate allele frequency.
-
-      """
-      if haplotypes is None:
-          return None
-      return haplotypes.haplotypes.sum() / float(haplotypes.haplotypes.size)
-
-   def compute_region_freq(self, haplotypes):
-      """Computes allele frequencies for set of variants.
+   def compute_freq(self, haplotypes):
+      """Computes alternate allele frequencies for set of variants.
 
       Args:
-         haplotypes (Haplotypes): genotypes for set of variants.
+         haplotypes (Haplotypes): genotypes of variants.
 
       Returns:
          numpy.ndarray: array of size haplotypes.size with alternate allele frequencies.
 
       """
-      if haplotypes is None:
-         return None
       m, n = haplotypes.haplotypes.shape
       ones = np.ones((n, 1), dtype = np.int)
       freqs = np.dot(haplotypes.haplotypes, ones) / float(n)
       freqs.resize(m)
       return freqs
 
-   def compute_r(self, haplotypes1, haplotypes2):
-      """Computes r coefficient of linkage-disequilibrium between two variants.
+
+   def compute_r_cross(self, haplotypes1, haplotypes2):
+      """Computes r coefficient of linkage-disequilibrium between pairs of variants in two sets.
 
       Args:
-         haplotypes1 (Haplotypes): genotypes for the first variant.
-         haplotypes2 (Haplotypes): genotypes for the second variant.
+         haplotypes1 (Haplotypes): genotypes for variants in first set.
+         haplotypes2 (Haplotypes): genotypes for variants in second set.
 
       Returns:
-         numpy.float64: r coefficient of linkage-disequilibrium.
+         numpy.ndarray: haplotypes1.size x haplotypes2.size matrix of r coefficients of linkage-disequilibrium.
+            Matrix rows correspond to variants in first set, while columns correspond to variants in second set.
+            Both rows and columns have the same order as variants in haplotypes1 and haplotypes2 objects, correspondingly.
 
       """
-      if haplotypes1 is None:
-         return None
-      if haplotypes2 is None:
-         return None
-      n = haplotypes1.haplotypes.size
-      a_counts = haplotypes1.haplotypes.sum()
-      b_counts = haplotypes2.haplotypes.sum()
-      return ((n * np.dot(haplotypes1.haplotypes, haplotypes2.haplotypes.transpose()) - a_counts * b_counts) / np.sqrt( a_counts * b_counts * (n - a_counts) * (n - b_counts)))[0, 0]
+      m1, n1 = haplotypes1.haplotypes.shape
+      m2, n2 = haplotypes2.haplotypes.shape
+      if m1 == 0 or m2 == 0:
+         return np.empty([0, 0], dtype = np.float)
+      ones = np.ones((n1, 1), dtype = np.int)
+      a_counts = np.dot(haplotypes1.haplotypes, ones)
+      b_counts = np.dot(haplotypes2.haplotypes, ones)
+      c1 = np.dot(a_counts, b_counts.transpose())
+      c2 = np.dot(n1 - a_counts, (n1 - b_counts).transpose())
+      return (n1 * np.dot(haplotypes1.haplotypes, haplotypes2.haplotypes.transpose()) - c1) / np.sqrt(c1 * c2)
 
-   def compute_r_matrix(self, haplotypes):
-      """Computes r coefficient of linkage-disequilibrium between all variants from the provided set.
+
+   def compute_r_pairwise(self, haplotypes):
+      """Computes r coefficient of linkage-disequilibrium between all variants in the given set.
 
       Args:
          haplotypes (Haplotypes): genotypes for a set of variants.
 
       Returns:
          numpy.ndarray: haplotypes.size x haplotypes.size symmetric matrix of r coefficients of linkage disequilibrium.
+            Matrix rows and columns have the same order as variants in haplotypes object.
 
       """
       if haplotypes is None:
