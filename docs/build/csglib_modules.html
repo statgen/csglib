@@ -44,9 +44,9 @@
             
   <div class="section" id="csglib-s-modules">
 <h1>csglib’s modules<a class="headerlink" href="#csglib-s-modules" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="intervaltree">
-<span id="interval-tree"></span><h2>IntervalTree<a class="headerlink" href="#intervaltree" title="Permalink to this headline">¶</a></h2>
-<p>This module implements interval tree data structure for time efficient (log complexity) interval queries.
+<div class="section" id="interval-tree">
+<span id="id1"></span><h2>Interval tree<a class="headerlink" href="#interval-tree" title="Permalink to this headline">¶</a></h2>
+<p>The <em>IntervalTree</em> module implements interval tree data structure for time efficient (log complexity) interval queries.
 The implementation is based on red-black binary tree and supports the following queries:</p>
 <ul class="simple">
 <li>find all intervals overlapping given point;</li>
@@ -86,15 +86,16 @@ The implementation is based on red-black binary tree and supports the following 
 </div>
 <p>Please, refer to <a class="reference internal" href="csg.intervaltree.html"><span class="doc">API documentation</span></a> for further details.</p>
 </div>
-<div class="section" id="ld">
-<span id="pyld"></span><h2>LD<a class="headerlink" href="#ld" title="Permalink to this headline">¶</a></h2>
-<p>This module is for computing linkage-disequilibrium (LD) (r, r^2) from VCFs.
-No special file format is needed - just provide phased VCFs (e.g. 1000G) compressed using bgzip and indexed using tabix.
+<div class="section" id="linkage-disequilibrium">
+<span id="pyld"></span><h2>Linkage disequilibrium<a class="headerlink" href="#linkage-disequilibrium" title="Permalink to this headline">¶</a></h2>
+<p>The <em>pyld</em> module implements computation of <em>r</em> coefficient of linkage disequilibrium (LD).
+No special file format is required. Phased genotypes must be provided in VCF files compressed using bgzip and indexed using tabix.
 Supported operations:</p>
 <ul class="simple">
-<li>compute pairwise LD between pair of SNPs from any chromosomal region in VCF;</li>
-<li>compute pairwise LD between all SNPs from a specified region in VCF;</li>
-<li>provides additional routines to compute allele frequencies.</li>
+<li>compute pairwise LD between pair of SNPs from any given chromosomal region;</li>
+<li>compute pairwise LD between a single SNP and all other SNPs from a given region;</li>
+<li>compute pairwise LD between all SNPs from a given region;</li>
+<li>compute alternate allele frequencies.</li>
 </ul>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">csg.genetics.ld.pyld</span> <span class="k">import</span> <span class="n">LD</span>
@@ -145,8 +146,8 @@ Supported operations:</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">csglib’s modules</a><ul>
-<li><a class="reference internal" href="#intervaltree">IntervalTree</a></li>
-<li><a class="reference internal" href="#ld">LD</a></li>
+<li><a class="reference internal" href="#interval-tree">Interval tree</a></li>
+<li><a class="reference internal" href="#linkage-disequilibrium">Linkage disequilibrium</a></li>
 </ul>
 </li>
 </ul>

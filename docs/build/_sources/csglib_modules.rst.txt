@@ -3,10 +3,10 @@ csglib's modules
 
 .. _interval_tree:
 
-IntervalTree
+Interval tree
 -------------
 
-This module implements interval tree data structure for time efficient (log complexity) interval queries.
+The *IntervalTree* module implements interval tree data structure for time efficient (log complexity) interval queries.
 The implementation is based on red-black binary tree and supports the following queries:
 
 * find all intervals overlapping given point;
@@ -49,16 +49,17 @@ Please, refer to :doc:`API documentation <csg.intervaltree>` for further details
 
 .. _pyld:
 
-LD
---
+Linkage disequilibrium
+----------------------
 
-This module is for computing linkage-disequilibrium (LD) (r, r^2) from VCFs.
-No special file format is needed - just provide phased VCFs (e.g. 1000G) compressed using bgzip and indexed using tabix. 
+The *pyld* module implements computation of *r* coefficient of linkage disequilibrium (LD).
+No special file format is required. Phased genotypes must be provided in VCF files compressed using bgzip and indexed using tabix. 
 Supported operations:
 
-* compute pairwise LD between pair of SNPs from any chromosomal region in VCF;
-* compute pairwise LD between all SNPs from a specified region in VCF;
-* provides additional routines to compute allele frequencies.
+* compute pairwise LD between pair of SNPs from any given chromosomal region;
+* compute pairwise LD between a single SNP and all other SNPs from a given region;
+* compute pairwise LD between all SNPs from a given region;
+* compute alternate allele frequencies.
 
 Example:
 ::
