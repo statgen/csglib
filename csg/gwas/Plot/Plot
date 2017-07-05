@@ -1,0 +1,17 @@
+import sys
+import argparse
+
+argparser = argparse.ArgumentParser('Tool for creating plots for genome-wide assocaitions studies (GWAS).')
+sub_argpasrer = argparser.add_subparsers(title = 'supported commands', description = '', help = '', dest = 'invoked_command')
+
+manhattan_argparser = sub_argpasrer.add_parser('manhattan', help = 'Creates Manhattan plot.')
+manhattan_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.') 
+manhattan_argparser.add_argument('--chrom-field', metavar = 'name,[regex]', dest = 'chrom_field_regex', required = True, type = str, help = '.')
+manhattan_argparser.add_argument('--position-field', metavar = 'name,[regex]', dest = 'position_field_regex', required = True, type = str, help = '.')
+manhattan_argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field', required = True, type = str, help = '.')
+
+if __name__ == '__main__':
+   args = argparser.parse_args()
+
+   if args.invoked_command == 'manhattan':
+      pass
