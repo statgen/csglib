@@ -1,17 +1,34 @@
 import sys
 import argparse
+import pandas as pd
+import numpy as np
+import types
+from PandasMediumParser import PandasMediumParser 
+from Manhattan import create_manhattan
 
 argparser = argparse.ArgumentParser('Tool for creating plots for genome-wide assocaitions studies (GWAS).')
 sub_argpasrer = argparser.add_subparsers(title = 'supported commands', description = '', help = '', dest = 'invoked_command')
 
 manhattan_argparser = sub_argpasrer.add_parser('manhattan', help = 'Creates Manhattan plot.')
 manhattan_argparser.add_argument('--in', metavar = 'file', dest = 'in_file', required = True, type = str, help = 'Input file compressed using gzip/bgzip.') 
-manhattan_argparser.add_argument('--chrom-field', metavar = 'name,[regex]', dest = 'chrom_field_regex', required = True, type = str, help = '.')
-manhattan_argparser.add_argument('--position-field', metavar = 'name,[regex]', dest = 'position_field_regex', required = True, type = str, help = '.')
-manhattan_argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field', required = True, type = str, help = '.')
+manhattan_argparser.add_argument('--sep', metavar = 'name', dest = 'sep', required = True, choices = ['comma', 'semicolon', 'tab', 'whitespace'], help = 'Field separator. Supported values: comma, semicolon, tab, whitespace.')
+manhattan_argparser.add_argument('--chrom-field', metavar = 'name,[regex]', dest = 'chrom_field_regex', required = True, type = str, help = 'First value is the field name that stores chromosome name. Optionally, second value after comma is the regular exprassion to extract chromosome name e.g. --chrom-field ID,"^([^:]+)" will extract chr11 value from chr11:71822_A1/A2 value stored in the ID field.')
+manhattan_argparser.add_argument('--position-field', metavar = 'name,[regex]', dest = 'position_field_regex', required = True, type = str, help = 'First value is the field name that stores chromosomal position in base-pairs. Optionally, second value is the regular exprassion to extract numeric position value e.g. --position-field ID,"^[^:]+:([0-9]+)" will extract 71822 value from chr11:71822_A1/A2 value stored in the ID field.')
+manhattan_argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field', required = True, type = str, help = 'Field name that stores P-values.')
+manhattan_argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, type = str, help = 'Output figure file name.')
+manhattan_argparser.add_argument('--signif', metavar = 'number', dest = 'signif', required = False, default = 10e-8, type = float, help = 'Significance threshold P-value. Default is 10e-8.') 
+manhattan_argparser.add_argument('--title', metavar = 'name', dest = 'title', required = False, type = str, help = 'Manhattan plot title.')
+manhattan_argparser.add_argument('--y-break', metavar = 'number', dest = 'y_break', nargs = 2, required = False, type = float, help = 'Break Y-axis (negative base 10 logarithm of P-value). First number is the start break point, second number is the end break point.')
+manhattan_argparser.add_argument('--dpi', metavar = 'number', dest = 'dpi', required = False, default = 300, type = int, help = 'DPI. Default value is 300.')
+manhattan_argparser.add_argument('--width', metavar = 'inches', dest = 'width_inches', required = False, default = 16, type = int, help = 'Witdh in inches.')
+manhattan_argparser.add_argument('--height', metavar = 'inches', dest = 'height_inches', required = False, default = 6, type = int, help = 'Height in inches.')
+
 
 if __name__ == '__main__':
    args = argparser.parse_args()
 
    if args.invoked_command == 'manhattan':
-      pass
+      medium = PandasMediumParser(args.in_file, args.sep, args.chrom_field_regex, args.position_field_regex, args.pvalue_field)
+      data = pd.read_csv(medium, header = None, sep = '\t', names = ['chrom', 'position', 'pvalue'], dtype = {'chrom': object, 'position': np.uint64, 'pvalue': np.float64 })
+      create_manhattan(data, args.out_file, args.y_break, args.title, args.dpi, args.width_inches, args.height_inches)
+

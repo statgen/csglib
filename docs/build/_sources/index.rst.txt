@@ -17,6 +17,7 @@ Users are also very welcomed to copy and re-use (cherry-pick) specific code snip
   * InflationFromFile
   * Harmonize
   * GWASCatalog
+  * :ref:`plot`
 
 * Pedigrees
 
