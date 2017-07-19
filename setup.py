@@ -48,6 +48,7 @@ setup(
   ],
   scripts = [
       'csg/gwas/Harmonize/Harmonize',
+      'csg/gwas/TransformEffect',
       'csg/gwas/Filter',
       'csg/gwas/AnnotateRs',
       'csg/gwas/SignificantLoci',

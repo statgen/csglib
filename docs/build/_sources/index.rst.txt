@@ -14,8 +14,10 @@ Users are also very welcomed to copy and re-use (cherry-pick) specific code snip
 ---------------------------
 * Genome-wide association studies (GWAS)
 
-  * InflationFromFile
-  * Harmonize
+  * :ref:`harmonize`
+  * :ref:`transform_effect`
+  * :ref:`inflation_from_file`
+  * :ref:`filter`
   * GWASCatalog
   * :ref:`plot`
 

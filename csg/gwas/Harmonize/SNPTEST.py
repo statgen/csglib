@@ -36,7 +36,6 @@ def duplicates(in_file):
       position_idx = header.index('position')
       alleleA_idx = header.index('alleleA')
       alleleB_idx = header.index('alleleB')
-      info_idx = header.index('info')
 
       variants = dict()
       n_variants = 0
