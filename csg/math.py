@@ -1,4 +1,5 @@
-import math
+from __future__ import absolute_import
+import math, re
 import numpy as np
 
 def convert_to_log10(value,na_strings=["NA","NaN",".",""]):
@@ -9,9 +10,6 @@ def convert_to_log10(value,na_strings=["NA","NaN",".",""]):
   In [1]: convert_to_log10("1.93e-780")
   Out[1]: -779.7144426909922
   """
-
-  import re
-  from math import log10
 
   if value in na_strings:
     return np.nan
@@ -28,5 +26,5 @@ def convert_to_log10(value,na_strings=["NA","NaN",".",""]):
   if base == 0:
     return float("-inf")
 
-  lv = log10(float(base)) + float(exponent)
+  lv = math.log10(float(base)) + float(exponent)
   return lv
