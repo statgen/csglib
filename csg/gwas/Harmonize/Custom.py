@@ -194,8 +194,8 @@ def harmonize(in_file, sep, comment, chrom_field, pos_field, coded_allele_field,
                counters['pvalue_le_zero'] += 1
                counters['n_removed_variants'] += 1
                continue
-            elif pvalue >= 1.0:
-               counters['pvalue_ge_one'] += 1
+            elif pvalue > 1.0:
+               counters['pvalue_gt_one'] += 1
                counters['n_removed_variants'] += 1
                continue
 

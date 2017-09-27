@@ -162,8 +162,8 @@ def harmonize_firth(in_file, panel_vcf, imputation_file, min_info, min_mac, max_
                counters['pvalue_le_zero'] += 1
                counters['n_removed_variants'] += 1
                continue
-            elif pvalue >= 1.0:
-               counters['pvalue_ge_one'] += 1
+            elif pvalue > 1.0:
+               counters['pvalue_gt_one'] += 1
                counters['n_removed_variants'] += 1
                continue
 
