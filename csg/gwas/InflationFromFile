@@ -1,24 +1,39 @@
 import argparse
 import gzip
 import os
+import re
 from csg.gwas.inflation import *
 from csg.intervaltree.IntervalTree import *
 
 argparser = argparse.ArgumentParser('Computes inflation factor.')
 argparser.add_argument('--file', metavar = 'file', dest = 'in_file', required = True, help = 'Input file compressed using gzip/bgzip.')
-argparser.add_argument('--pvalue', metavar = 'name', dest = 'pvalue_field', required = False, help = 'Field that stores p-values.')
-argparser.add_argument('--effect', metavar = 'name', dest = 'effect_field', required = False, help = 'Field that stores effect sizes.')
-argparser.add_argument('--se', metavar = 'name', dest = 'se_field', required = False, help = 'Field that stores standard error.')
-argparser.add_argument('--chrom', metavar = 'name', dest = 'chrom_field', required = False, help = 'Field that stores chromosome name.')
-argparser.add_argument('--position', metavar = 'number', dest = 'position_field', required = False, help = 'Field that stores chromosomal position in base-pairs.')
-argparser.add_argument('--sep', metavar = 'separator', dest = 'sep', required = True, choices = ['tab', 'comma', 'semicolon'], help = 'Field separator: tab, comma, semicolon.')
-argparser.add_argument('--known-regions-file', metavar = 'file', dest = 'known_regions_file', required = False, help = 'File with regions that have known association hits. File has three columns')
+argparser.add_argument('--sep', metavar = 'separator', dest = 'sep', required = True, choices = ['tab', 'comma', 'semicolon', 'whitespace'], help = 'Field separator: tab, comma, semicolon, whitespace.')
+argparser.add_argument('--pvalue-field', metavar = 'name', dest = 'pvalue_field', required = False, help = 'Field that stores p-values.')
+argparser.add_argument('--effect-field', metavar = 'name', dest = 'effect_field', required = False, help = 'Field that stores effect sizes.')
+argparser.add_argument('--se-field', metavar = 'name', dest = 'se_field', required = False, help = 'Field that stores standard error.')
+argparser.add_argument('--chrom-field', metavar = 'name[,regex]', dest = 'chrom_field_regex', required = False, help = 'Field that stores chromosome name. Optionally, second value after comma is the regular expression to extract chromosome name e.g. --chrom-field ID,"^([^:]+)" extracts chr11 from chr11:71822_A1/A2 value stored in the ID field.')
+argparser.add_argument('--position-field', metavar = 'name[,regex]', dest = 'position_field_regex', required = False, help = 'Field that stores chromosomal position in base-pairs. Optionally, second  value after comma is the regular expression to extract position e.g. --position-field ID,":([0-9]+)_" extracts 71822 from chr11:71822_A1/A2 value stored in the ID field.')
+argparser.add_argument('--known-regions-file', metavar = 'file', dest = 'known_regions_file', required = False, help = 'File with regions that have known association hits. File has three columns (without a header): chromosome, start position, end position.')
+
+
+def get_separator_char(separator):
+   if separator == 'tab':
+      return '\t'
+   elif separator == 'whitespace':
+      return ' '
+   elif separator == 'comma':
+      return ','
+   elif separator == 'semicolon':
+      return ';'
+   else:
+      raise Exception('Field separator %s is not supported!' % sep)
+
 
 def read_known_regions(known_regions_file):
    regions_by_chrom = dict()
    with open(known_regions_file, 'r') as ifile:
       for line in ifile:
-         fields = line.rstrip().split('\t')
+         fields = line.rstrip().split()
          chrom = fields[0]
          position_start = long(fields[1])
          position_end = long(fields[2])
@@ -27,44 +42,84 @@ def read_known_regions(known_regions_file):
          regions_by_chrom[chrom].add(position_start, position_end)
    return regions_by_chrom
 
-def read_pvalue(in_file, pvalue_field):
+
+def read_pvalue(in_file, sep_char, pvalue_field):
    with gzip.GzipFile(in_file, 'r') as ifile:
-      header = ifile.readline().strip().split('\t')
+      header = ifile.readline().strip().split(sep_char)
       try:
          pvalue_idx = header.index(pvalue_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % pvalue_field)
       for line in ifile:
-         fields = line.rstrip().split('\t')
+         fields = line.rstrip().split(sep_char)
          yield AssociationStats(pvalue = np.float(fields[pvalue_idx]), effect = None, se = None)
 
-def read_pvalue_filter_regions(in_file, pvalue_field, regions_by_chrom, chrom_field, position_field):
+
+def read_pvalue_filter_regions(in_file, sep_char, pvalue_field, chrom_field_regex, position_field_regex, regions_by_chrom):
+   chrom_field_regex = chrom_field_regex.split(',')
+   position_field_regex = position_field_regex.split(',')
+
+   chrom_field = chrom_field_regex[0]
+   chrom_regex = None
+   if len(chrom_field_regex) > 1:
+      chrom_regex = re.compile(chrom_field_regex[1])
+
+   position_field = position_field_regex[0]
+   position_regex = None
+   if len(position_field_regex) > 1:
+      position_regex = re.compile(position_field_regex[1])
+     
    with gzip.GzipFile(in_file, 'r') as ifile:
-      header = ifile.readline().strip().split('\t')
+      header = ifile.readline().strip().split(sep_char)
+
       try:
          pvalue_idx = header.index(pvalue_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % pvalue_field)
+      
       try:
          chrom_idx = header.index(chrom_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % chrom_field)
+      
       try:
          position_idx = header.index(position_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % position_field)
+      
       for line in ifile:
-         fields = line.rstrip().split('\t')
-         position = long(fields[position_idx])
-         chrom = fields[chrom_idx]
+         fields = line.rstrip().split(sep_char)
+      
+         if chrom_regex is not None:
+            match = chrom_regex.search(fields[chrom_idx])
+            if match is None or not match.group(1):
+               raise Exception('Error while extracting chromosome name from %s!' % fields[chrom_idx])
+            chrom = match.group(1)
+         else:
+            chrom = fields[chrom_idx]
+         
+         if position_regex is not None:
+            match = position_regex.search(fields[position_idx])
+            if match is None or not match.group(1):
+               raise Exception('Error while extracting position from %s!' % fields[position_idx])
+            position = match.group(1)
+         else:
+            position = fields[position_idx]
+
+         try:
+            position = long(position)
+         except ValueError:
+            raise Exception('Error while extracting and casting to integer chromosomal position %s!' % fields[position_idx])
+ 
          regions = regions_by_chrom.get(chrom, None)
          if regions is not None and any(regions.point_intersect(position)):
             continue
          yield AssociationStats(pvalue = np.float(fields[pvalue_idx]), effect = None, se = None)
 
-def read_effect_se(in_file, effect_field, se_field):
+
+def read_effect_se(in_file, sep_char, effect_field, se_field):
    with gzip.GzipFile(in_file, 'r') as ifile:
-      header = ifile.readline().strip().split('\t')
+      header = ifile.readline().strip().split(sep_char)
       try:
          effect_idx = header.index(effect_field)
       except ValueError:
@@ -74,44 +129,86 @@ def read_effect_se(in_file, effect_field, se_field):
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % se_field)
       for line in ifile:
-         fields = line.rstrip().split('\t')
+         fields = line.rstrip().split(sep_char)
          yield AssociationStats(pvalue = None, effect = np.float(fields[effect_idx]), se = np.float(fields[se_idx]))
 
-def read_effect_se_filter_regions(in_file, effect_field, se_field, regions_by_chrom, chrom_field, position_field):
+
+def read_effect_se_filter_regions(in_file, sep_char, effect_field, se_field, chrom_field_regex, position_field_regex, regions_by_chrom):
+   chrom_field_regex = chrom_field_regex.split(',')
+   position_field_regex = position_field_regex.split(',')
+
+   chrom_field = chrom_field_regex[0]
+   chrom_regex = None
+   if len(chrom_field_regex) > 1:
+      chrom_regex = re.compile(chrom_field_regex[1])
+
+   position_field = position_field_regex[0]
+   position_regex = None
+   if len(position_field_regex) > 1:
+      position_regex = re.compile(position_field_regex[1])
+
    with gzip.GzipFile(in_file, 'r') as ifile:
-      header = ifile.readline().strip().split('\t')
+      header = ifile.readline().strip().split(sep_char)
+
       try:
          effect_idx = header.index(effect_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % effect_field)
+     
       try:
          se_idx = header.index(se_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % se_field)
+      
       try:
          chrom_idx = header.index(chrom_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % chrom_field)
+      
       try:
          position_idx = header.index(position_field)
       except ValueError:
          raise Exception('Field \'%s\' was not found in input file!' % position_field)
+      
       for line in ifile:
-         fields = line.rstrip().split('\t')
-         position = long(fields[position_idx])
-         chrom = fields[chrom_idx]
+         fields = line.rstrip().split(sep_char)
+         
+         if chrom_regex is not None:
+            match = chrom_regex.search(fields[chrom_idx])
+            if match is None or not match.group(1):
+               raise Exception('Error while extracting chromosome name from %s!' % fields[chrom_idx])
+            chrom = match.group(1)
+         else:
+            chrom = fields[chrom_idx]
+
+         if position_regex is not None:
+            match = position_regex.search(fields[position_idx])
+            if match is None or not match.group(1):
+               raise Exception('Error while extracting position from %s!' % fields[position_idx])
+            position = match.group(1)
+         else:
+            position = fields[position_idx]
+         
+         try:
+            position = long(position)
+         except ValueError:
+            raise Exception('Error while extracting and casting to integer chromosomal position from %s!' % fields[position_idx])
+         
          regions = regions_by_chrom.get(chrom, None)
          if regions is not None and any(regions.point_intersect(position)):
             continue
          yield AssociationStats(pvalue = None, effect = np.float(fields[effect_idx]), se = np.float(fields[se_idx]))
+
 
 if __name__ == '__main__':
    args = argparser.parse_args()
 
+   sep_char = get_separator_char(args.sep)
+
    regions_by_chrom = None
 
-   if args.known_regions_file is not None or args.chrom_field is not None or args.position_field is not None:
-      if args.known_regions_file is not None and args.chrom_field is not None and args.position_field is not None:
+   if args.known_regions_file is not None or args.chrom_field_regex is not None or args.position_field_regex is not None:
+      if args.known_regions_file is not None and args.chrom_field_regex is not None and args.position_field_regex is not None:
          regions_by_chrom = read_known_regions(args.known_regions_file)
       else:
          print 'Known regions file must be provided together with chromosome and position field names.'
@@ -122,16 +219,16 @@ if __name__ == '__main__':
       if args.se_field is not None:
          print 'Specified se column name wil be ignored.'
       if regions_by_chrom:
-         stats_generator = read_pvalue_filter_regions(args.in_file, args.pvalue_field, regions_by_chrom, args.chrom_field, args.position_field)
+         stats_generator = read_pvalue_filter_regions(args.in_file, sep_char, args.pvalue_field, args.chrom_field_regex, args.position_field_regex, regions_by_chrom)
       else:
-         stats_generator = read_pvalue(args.in_file, args.pvalue_field)
+         stats_generator = read_pvalue(args.in_file, sep_char, args.pvalue_field)
       inflation = inflation_from_pvalue(stats_generator)
       print os.path.basename(args.in_file), inflation
    elif args.effect_field is not None and args.se_field is not None:
       if regions_by_chrom:
-         stats_generator = read_effect_se_filter_regions(args.in_file, args.effect_field, args.se_field, regions_by_chrom, args.chrom_field, args.position_field)
+         stats_generator = read_effect_se_filter_regions(args.in_file, sep_char, args.effect_field, args.se_field, args.chrom_field_regex, args.position_field_regex, regions_by_chrom)
       else:
-         stats_generator = read_effect_se(args.in_file, args.effect_field, args.se_field)
+         stats_generator = read_effect_se(args.in_file, sep_char, args.effect_field, args.se_field)
       inflation = inflation_from_effect_se(stats_generator)
       print os.path.basename(args.in_file), inflation
    else:

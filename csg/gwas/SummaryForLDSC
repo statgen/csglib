@@ -1,0 +1,120 @@
+import gzip
+import pysam
+import argparse
+import re
+import scipy.stats
+import numpy as np
+from contextlib import closing
+from csg.intervaltree.IntervalTree import *
+
+
+argparser = argparse.ArgumentParser('This tool hels to format GWAS result file for LD scrore regression using LDCS software.')
+argparser.add_argument('--gwas', metavar = 'file', dest = 'gwas_file', required = True, help = 'Input GWAS file (compressed using gzip/bgzip).')
+argparser.add_argument('--vcf', metavar = 'file', dest = 'vcf_file', required = True, help = 'Input reference VCF with rs identifiers (indexed using tabix).')
+argparser.add_argument('--min-info', metavar = 'float', dest = 'min_info', type = float, required = True, help = 'Threshold for imputation quality. Recommended filter for LD score regression is 0.9.')
+argparser.add_argument('--min-maf', metavar = 'float', dest = 'min_maf', type = float, required = True, help = 'Threshold for minor allele frequency. Recommended filter for LD score regression is 0.01.')
+argparser.add_argument('--out', metavar = 'file', dest = 'out_file', required = True, help = 'Output file (compressed using gzip/bgzip).')
+argparser.add_argument('--known-regions-file', metavar = 'file', required = False, help = 'File with regions that have known association hits. File has three columns (no header): chromosome name, start position, end_position.')
+
+
+def read_known_regions(known_regions_file):
+   regions_by_chrom = dict()
+   with open(known_regions_file, 'r') as ifile:
+      for line in ifile:
+         fields = line.rstrip().split()
+         chrom = fields[0]
+         position_start = long(fields[1])
+         position_end = long(fields[2])
+         if chrom not in regions_by_chrom:
+            regions_by_chrom[chrom] = IntervalTree()
+         regions_by_chrom[chrom].add(position_start, position_end)
+   return regions_by_chrom
+
+
+def load_vcf_chunk(vcf_file, chrom, start, end):
+   chunk = dict()
+   rs_pattern = re.compile('^rs[0-9]+$')
+   with closing(pysam.Tabixfile(vcf_file)) as tabix:
+      for row in tabix.fetch(chrom, start - 1, end):
+         fields = row.rstrip().split('\t')
+         if not rs_pattern.match(fields[2]):
+            continue
+         name = fields[0] + '_' + fields[1] + '_' + fields[3]
+         chunk[name] = (set(fields[4].split(',')), fields[2])
+   return chunk
+
+
+def process_gwas_file(gwas_file, vcf_file, min_info, min_maf, regions_by_chrom, output_file):
+   with gzip.GzipFile(gwas_file, 'r') as ifile, gzip.GzipFile(output_file, 'w') as ofile:
+      header = ifile.readline()
+      if header:
+         expected_minimal_header = ['UNIQUE_ID', 'CHR', 'POSITION', 'REF_ALLELE', 'ALT_ALLELE',
+                                    'CODED_ALLELE', 'NONCODED_ALLELE', 'TOTAL', 'CASES', 'CONTROLS',  'AF', 'MAF',
+                                    'EFFECT', 'SE', 'PVALUE', 'INFO']
+         if any(x != y for x, y in zip(expected_minimal_header, header.rstrip().split('\t'))):
+            raise Exception('Header doesn\'t match expected format!\n')
+      else:
+         raise Exception('No header found!')
+
+      chunk_chrom = ''
+      chunk_last_position = -1
+      chunk = None
+      chunk_step_size = 1000000
+
+      ofile.write('RSID\tALLELE1\tALLELE2\tN\tPVALUE\tEFFECT\n')
+
+      for line in ifile:
+         fields = line.rstrip().split('\t')
+         chrom = fields[1]
+         position = long(fields[2])
+
+         if regions_by_chrom is not None:
+            regions = regions_by_chrom.get(chrom, None)
+            if regions is not None and any(regions.point_intersect(position)):
+               continue
+
+         ref_allele = fields[3]
+         alt_alleles = fields[4].split(',')
+         allele1 = fields[5]
+         allele2 = fields[6]
+         sample_size = fields[7]
+
+         if fields[11] != 'NA':
+            maf = float(fields[11])
+            if maf <= min_maf:
+               continue
+
+         if fields[15] != 'NA':
+            info = float(fields[15])
+            if info <= min_info:
+               continue
+
+         effect = fields[12]
+         pvalue = fields[14]
+ 
+         if chunk_chrom != chrom or chunk_last_position < position:
+            chunk_chrom = chrom
+            chunk_last_position = position + chunk_step_size
+            chunk = load_vcf_chunk(vcf_file, chunk_chrom, position, chunk_last_position)
+
+         name = chrom + '_' + fields[2] + '_' + ref_allele
+
+         if name in chunk:
+            if (chunk[name][0].issuperset(alt_alleles)):
+               rsid = chunk[name][1]
+            else:
+               rsid = fields[0]
+         else:
+            rsid = fields[0]
+
+         ofile.write('%s\t%s\t%s\t%s\t%s\t%s\n' % (rsid, allele1, allele2, sample_size, pvalue, effect))
+
+
+if __name__ == '__main__':
+   args = argparser.parse_args()
+
+   regions_by_chrom = None
+   if args.known_regions_file is not None:
+      regions_by_chrom = read_known_regions(args.known_regions_file)
+
+   process_gwas_file(args.gwas_file, args.vcf_file, args.min_info, args.min_maf, regions_by_chrom, args.out_file)
