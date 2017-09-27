@@ -13,7 +13,7 @@ headers = {
 
 counter_labels = [
         'n_variants', 'n_removed_variants', 'n_remained_variants',
-        'duplicated', 'not_in_panel', 'allele_mismatch', 'pvalue_is_na', 'pvalue_le_zero', 'pvalue_ge_one',
+        'duplicated', 'not_in_panel', 'allele_mismatch', 'pvalue_is_na', 'pvalue_le_zero', 'pvalue_gt_one',
         'info_is_na', 'info_lt_min', 'se_is_na', 'se_le_zero', 'se_gt_max', 'mac_lt_min'
         ]
 
@@ -307,8 +307,8 @@ def harmonize_emmax(in_file, panel_vcf, imputation_file, min_info, min_mac, max_
                counters['pvalue_le_zero'] += 1
                counters['n_removed_variants'] += 1
                continue
-            elif pvalue >= 1.0:
-               counters['pvalue_ge_one'] += 1
+            elif pvalue > 1.0:
+               counters['pvalue_gt_one'] += 1
                counters['n_removed_variants'] += 1
                continue
 
