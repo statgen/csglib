@@ -34,7 +34,6 @@ setup(
     "Programming Language :: Python :: 3.5",
     "Topic :: Scientific/Engineering :: Bio-Informatics"
   ],
-  setup_requires = ["Cython"],
   install_requires = requirements,
   ext_modules = extensions,
   zip_safe = False,
