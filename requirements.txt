@@ -1,2 +1,4 @@
 numpy
 scipy
+cython
+setuptools>=40.0.0
